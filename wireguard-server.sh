@@ -15,7 +15,6 @@ root-check
 # Checking For Virtualization
 function virt-check() {
   # Deny OpenVZ
-  if [[ $(command -v "systemd-detect-virt") ]]; then
     if [ "$(systemd-detect-virt)" == "openvz" ]; then
       echo "OpenVZ virtualization is not supported (yet)."
       exit
@@ -25,9 +24,6 @@ function virt-check() {
       echo "LXC virtualization is not supported (yet)."
       exit
     fi
-  else
-    echo "Warning: this script might not work correctly in your system."
-  fi
 }
 
 # Virtualization Check
@@ -172,11 +168,7 @@ if [ ! -f "$WG_CONFIG" ]; then
   # Detect public interface and pre-fill for the user
   function server-pub-nic() {
     if [ "$SERVER_PUB_NIC" == "" ]; then
-      if [[ $(command -v "ip") ]]; then
         SERVER_PUB_NIC="$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)"
-      else
-        echo "Warning: this script might not work correctly in your system"
-      fi
       read -rp "System public nic address is $SERVER_PUB_NIC Is that correct? [y/n]: " -e -i y CONFIRM
       if [ "$CONFIRM" == "n" ]; then
         echo "Aborted. Use environment variable SERVER_PUB_NIC to set the correct public nic address."
@@ -557,17 +549,19 @@ if [ ! -f "$WG_CONFIG" ]; then
     qname-minimisation: yes
     prefetch-key: yes" >>/etc/unbound/unbound.conf
         # We need to disable this so unbound works on ubuntu.
-        if pgrep systemd-journal; then
+        function diable-systemd-resolved() {
           if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
             service systemd-resolved stop
             service systemd-resolved disable
           fi
-        else
           if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
             systemctl stop systemd-resolved
             systemctl disable systemd-resolved
           fi
-        fi
+          }
+
+          diable-systemd-resolved
+
       fi
       if [ "$DISTRO" == "debian" ]; then
         # Install Unbound
@@ -694,17 +688,19 @@ if [ ! -f "$WG_CONFIG" ]; then
       # Diable the modification of the file
       chattr +i /etc/resolv.conf
       # Restart unbound
-      if pgrep systemd-journal; then
+      function enable-unbound() {
         if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
           service unbound enable
-          service unbound restart
+          service unbound start
         fi
-      else
         if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
           systemctl enable unbound
-          systemctl restart unbound
+          systemctl start unbound
         fi
-      fi
+        }
+        
+        enable-unbound
+        
     fi
   }
 
@@ -757,17 +753,18 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$CLIENT_NAME"-$WIREGUARD_P
     # Echo the file
     echo "Client Config --> /etc/wireguard/clients/$CLIENT_NAME-$WIREGUARD_PUB_NIC.conf"
     # Restart WireGuard
-    if pgrep systemd-journal; then
+    function enable-wireguard() {
       if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
         service wg-quick@$WIREGUARD_PUB_NIC enable
-        service wg-quick@$WIREGUARD_PUB_NIC restart
+        service wg-quick@$WIREGUARD_PUB_NIC start
       fi
-    else
       if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
         systemctl enable wg-quick@$WIREGUARD_PUB_NIC
-        systemctl restart wg-quick@$WIREGUARD_PUB_NIC
+        systemctl start wg-quick@$WIREGUARD_PUB_NIC
       fi
-    fi
+      }
+      
+      enable-wireguard
   }
 
   # Setting Up Wireguard Config
@@ -794,48 +791,56 @@ else
     done
     case $WIREGUARD_OPTIONS in
     1)
-      if pgrep systemd-journal; then
+      function show-wireguard() {
         if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
-          wg show
+          service wg show
         fi
-      else
         if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
-          sudo wg show
+          systemctl wg show
         fi
-      fi
+      }
+      
+      show-wireguard
+      
       ;;
     2)
-      if pgrep systemd-journal; then
+      function start-wireguard() {
         if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
           service wg-quick@$WIREGUARD_PUB_NIC start
         fi
-      else
         if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
           systemctl start wg-quick@$WIREGUARD_PUB_NIC
         fi
-      fi
+      }
+      
+      start-wireguard
+      
       ;;
     3)
-      if pgrep systemd-journal; then
+      function stop-wireguard() {
         if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
           service wg-quick@$WIREGUARD_PUB_NIC stop
         fi
-      else
         if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
           systemctl stop wg-quick@$WIREGUARD_PUB_NIC
         fi
-      fi
+      }
+      
+      stop-wireguard
+      
       ;;
     4)
-      if pgrep systemd-journal; then
+      function restart-wireguard() {
         if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
           service wg-quick@$WIREGUARD_PUB_NIC restart
         fi
-      else
         if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
           systemctl restart wg-quick@$WIREGUARD_PUB_NIC
         fi
-      fi
+      }
+      
+      restart-wireguard
+      
       ;;
     5)
       echo "Lets name the WireGuard Peer, Use one word only, no special characters. (No Spaces)"
@@ -878,15 +883,17 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
       qrencode -t ansiutf8 -l L </etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUARD_PUB_NIC.conf
       echo "Client config --> /etc/wireguard/clients/$NEW_CLIENT_NAME-$WIREGUARD_PUB_NIC.conf"
       # Restart WireGuard
-      if pgrep systemd-journal; then
+      function add-peer() {
         if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
           service wg-quick@$WIREGUARD_PUB_NIC restart
         fi
-      else
         if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
           systemctl restart wg-quick@$WIREGUARD_PUB_NIC
         fi
-      fi
+        }
+        
+        add-peer
+        
       ;;
     6)
       # Remove User
@@ -900,17 +907,18 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
         # shellcheck disable=SC1117
         sed -i "/\# $REMOVECLIENT start/,/\# $REMOVECLIENT end/d" $WG_CONFIG
         rm /etc/wireguard/clients/"$REMOVECLIENT"-$WIREGUARD_PUB_NIC.conf
+        echo "Client named $REMOVECLIENT has been removed."
       fi
-      if pgrep systemd-journal; then
+      function remove-peer() {
         if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
           service wg-quick@$WIREGUARD_PUB_NIC restart
         fi
-      else
         if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
           systemctl restart wg-quick@$WIREGUARD_PUB_NIC
         fi
-      fi
-      echo "Client named $REMOVECLIENT has been removed."
+        }
+        
+        remove-peer
       ;;
     7)
       # Uninstall Wireguard and purging files
