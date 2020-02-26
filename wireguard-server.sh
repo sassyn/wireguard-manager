@@ -556,12 +556,12 @@ if [ ! -f "$WG_CONFIG" ]; then
     prefetch-key: yes" >>/etc/unbound/unbound.conf
         # We need to disable this so unbound works on ubuntu.
         if pgrep systemd-journal; then
-          if [[ $(service systemd-resolved status) ]]; then
+          if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
             systemctl stop systemd-resolved
             systemctl disable systemd-resolved
           fi
         else
-          if [[ $(systemctl status systemd-resolved) ]]; then
+          if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
             service systemd-resolved stop
             service systemd-resolved disable
           fi
@@ -693,12 +693,12 @@ if [ ! -f "$WG_CONFIG" ]; then
       chattr +i /etc/resolv.conf
       # Restart unbound
       if pgrep systemd-journal; then
-        if [[ $(service systemd-resolved status) ]]; then
+        if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
           systemctl enable unbound
           systemctl restart unbound
         fi
       else
-        if [[ $(systemctl status systemd-resolved) ]]; then
+        if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
           service unbound enable
           service unbound restart
         fi
@@ -756,12 +756,12 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$CLIENT_NAME"-$WIREGUARD_P
     echo "Client Config --> /etc/wireguard/clients/$CLIENT_NAME-$WIREGUARD_PUB_NIC.conf"
     # Restart WireGuard
     if pgrep systemd-journal; then
-      if [[ $(service systemd-resolved status) ]]; then
+      if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
         systemctl enable wg-quick@$WIREGUARD_PUB_NIC
         systemctl restart wg-quick@$WIREGUARD_PUB_NIC
       fi
     else
-      if [[ $(systemctl status systemd-resolved) ]]; then
+      if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
         service wg-quick@$WIREGUARD_PUB_NIC enable
         service wg-quick@$WIREGUARD_PUB_NIC restart
       fi
@@ -793,44 +793,44 @@ else
     case $WIREGUARD_OPTIONS in
     1)
       if pgrep systemd-journal; then
-        if [[ $(service systemd-resolved status) ]]; then
+        if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
           wg show
         fi
       else
-        if [[ $(systemctl status systemd-resolved) ]]; then
+        if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
           sudo wg show
         fi
       fi
       ;;
     2)
       if pgrep systemd-journal; then
-        if [[ $(service systemd-resolved status) ]]; then
+        if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
           systemctl start wg-quick@$WIREGUARD_PUB_NIC
         fi
       else
-        if [[ $(systemctl status systemd-resolved) ]]; then
+        if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
           service wg-quick@$WIREGUARD_PUB_NIC start
         fi
       fi
       ;;
     3)
       if pgrep systemd-journal; then
-        if [[ $(service systemd-resolved status) ]]; then
+        if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
           systemctl stop wg-quick@$WIREGUARD_PUB_NIC
         fi
       else
-        if [[ $(systemctl status systemd-resolved) ]]; then
+        if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
           service wg-quick@$WIREGUARD_PUB_NIC stop
         fi
       fi
       ;;
     4)
       if pgrep systemd-journal; then
-        if [[ $(service systemd-resolved status) ]]; then
+        if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
           systemctl restart wg-quick@$WIREGUARD_PUB_NIC
         fi
       else
-        if [[ $(systemctl status systemd-resolved) ]]; then
+        if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
           service wg-quick@$WIREGUARD_PUB_NIC restart
         fi
       fi
@@ -877,11 +877,11 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
       echo "Client config --> /etc/wireguard/clients/$NEW_CLIENT_NAME-$WIREGUARD_PUB_NIC.conf"
       # Restart WireGuard
       if pgrep systemd-journal; then
-        if [[ $(service systemd-resolved status) ]]; then
+        if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
           systemctl restart wg-quick@$WIREGUARD_PUB_NIC
         fi
       else
-        if [[ $(systemctl status systemd-resolved) ]]; then
+        if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
           service wg-quick@$WIREGUARD_PUB_NIC restart
         fi
       fi
@@ -900,11 +900,11 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
         rm /etc/wireguard/clients/"$REMOVECLIENT"-$WIREGUARD_PUB_NIC.conf
       fi
       if pgrep systemd-journal; then
-        if [[ $(service systemd-resolved status) ]]; then
+        if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
           systemctl restart wg-quick@$WIREGUARD_PUB_NIC
         fi
       else
-        if [[ $(systemctl status systemd-resolved) ]]; then
+        if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
           service wg-quick@$WIREGUARD_PUB_NIC restart
         fi
       fi
@@ -917,7 +917,7 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
       if [ "$REMOVE_WIREGUARD" = "y" ]; then
         # Stop WireGuard
         if pgrep systemd-journal; then
-          if [[ $(service systemd-resolved status) ]]; then
+          if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
           # Disable WireGuard
           systemctl disable wg-quick@$WIREGUARD_PUB_NIC
           wg-quick down $WIREGUARD_PUB_NIC
@@ -926,7 +926,7 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
           systemctl stop unbound
           fi
         else
-          if [[ $(systemctl status systemd-resolved) ]]; then
+          if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
           # Disable WireGuard
           service wg-quick@$WIREGUARD_PUB_NIC disable
           wg-quick down $WIREGUARD_PUB_NIC
