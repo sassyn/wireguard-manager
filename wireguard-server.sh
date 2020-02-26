@@ -806,7 +806,6 @@ else
       if pgrep systemd-journal; then
         if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
           service wg-quick@$WIREGUARD_PUB_NIC start
-          systemctl start wg-quick@$WIREGUARD_PUB_NIC
         fi
       else
         if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
@@ -821,7 +820,6 @@ else
         fi
       else
         if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
-          service wg-quick@$WIREGUARD_PUB_NIC stop
           systemctl stop wg-quick@$WIREGUARD_PUB_NIC
         fi
       fi
