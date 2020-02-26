@@ -374,6 +374,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       echo "   11) Custom (Advanced)"
       until [[ "$CLIENT_DNS_SETTINGS" =~ ^[1-11]$ ]]; do
         read -rp "DNS [1-11]: " -e -i 1 CLIENT_DNS_SETTINGS
+      done
       case $CLIENT_DNS_SETTINGS in
       1)
         CLIENT_DNS="176.103.130.130,176.103.130.131,2a00:5a60::ad1:0ff,2a00:5a60::ad2:0ff"
