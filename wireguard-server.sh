@@ -15,18 +15,14 @@ root-check
 # Checking For Virtualization
 function virt-check() {
   # Deny OpenVZ
-  if [[ $(command -v "systemd-detect-virt") ]]; then
-    if [ "$(systemd-detect-virt)" == "openvz" ]; then
-      echo "OpenVZ virtualization is not supported (yet)."
-      exit
-    fi
-    # Deny LXC
-    if [ "$(systemd-detect-virt)" == "lxc" ]; then
-      echo "LXC virtualization is not supported (yet)."
-      exit
-    fi
-  else
-    echo "Warning: this script might not work correctly in your system."
+  if [ "$(systemd-detect-virt)" == "openvz" ]; then
+    echo "OpenVZ virtualization is not supported (yet)."
+    exit
+  fi
+  # Deny LXC
+  if [ "$(systemd-detect-virt)" == "lxc" ]; then
+    echo "LXC virtualization is not supported (yet)."
+    exit
   fi
 }
 
@@ -36,14 +32,13 @@ virt-check
 # Detect Operating System
 function dist-check() {
   DIST_CHECK="/etc/os-release"
+  # shellcheck disable=SC1090
   if [ -e $DIST_CHECK ]; then
-    # shellcheck disable=SC1090
+    # shellcheck disable=SC1091
     source $DIST_CHECK
     DISTRO=$ID
-    VERSION=$VERSION_ID
-  else
-    echo "Your distribution is not supported (yet)."
-    exit
+    # shellcheck disable=SC2034
+    DISTRO_VERSION=$VERSION_ID
   fi
 }
 
@@ -75,7 +70,7 @@ function headless-install() {
     SERVER_HOST_V4=${SERVER_HOST_V4:-y}
     SERVER_HOST_V6=${SERVER_HOST_V6:-y}
     SERVER_PUB_NIC=${SERVER_PUB_NIC:-y}
-    PORT_CHOICE_SETTINGS=${PORT_CHOICE_SETTINGS:-1}
+    SERVER_PORT_SETTINGS=${SERVER_PORT_SETTINGS:-1}
     NAT_CHOICE_SETTINGS=${NAT_CHOICE_SETTINGS:-1}
     MTU_CHOICE_SETTINGS=${MTU_CHOICE_SETTINGS:-1}
     SERVER_HOST_SETTINGS=${SERVER_HOST_SETTINGS:-1}
@@ -129,9 +124,9 @@ if [ ! -f "$WG_CONFIG" ]; then
     if [ "$SERVER_HOST_V4" == "" ]; then
       SERVER_HOST_V4="$(curl --silent ipv4.icanhazip.com)"
       read -rp "System public IPV4 address is $SERVER_HOST_V4 Is that correct? [y/n]: " -e -i "$IPV4_SUGGESTION" CONFIRM
-      if [ "$CONFIRM" == "n" ]; then
-        echo "Aborted. Use environment variable SERVER_HOST_V4 to set the correct public IP address."
-      fi
+    fi
+    if [ "$CONFIRM" == "n" ]; then
+      echo "Aborted. Use environment variable SERVER_HOST_V4 to set the correct public IP address."
     fi
   }
 
@@ -160,9 +155,9 @@ if [ ! -f "$WG_CONFIG" ]; then
     if [ "$SERVER_HOST_V6" == "" ]; then
       SERVER_HOST_V6="$(curl --silent ipv6.icanhazip.com)"
       read -rp "System public IPV6 address is $SERVER_HOST_V6 Is that correct? [y/n]: " -e -i "$IPV6_SUGGESTION" CONFIRM
-      if [ "$CONFIRM" == "n" ]; then
-        echo "Aborted. Use environment variable SERVER_HOST_V6 to set the correct public IP address."
-      fi
+    fi
+    if [ "$CONFIRM" == "n" ]; then
+      echo "Aborted. Use environment variable SERVER_HOST_V6 to set the correct public IP address."
     fi
   }
 
@@ -172,15 +167,12 @@ if [ ! -f "$WG_CONFIG" ]; then
   # Detect public interface and pre-fill for the user
   function server-pub-nic() {
     if [ "$SERVER_PUB_NIC" == "" ]; then
-      if [[ $(command -v "ip") ]]; then
-        SERVER_PUB_NIC="$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)"
-      else
-        echo "Warning: this script might not work correctly in your system"
-      fi
+      SERVER_PUB_NIC="$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)"
       read -rp "System public nic address is $SERVER_PUB_NIC Is that correct? [y/n]: " -e -i y CONFIRM
-      if [ "$CONFIRM" == "n" ]; then
-        echo "Aborted. Use environment variable SERVER_PUB_NIC to set the correct public nic address."
-      fi
+    fi
+    if [ "$CONFIRM" == "n" ]; then
+      echo "Aborted. Use environment variable SERVER_PUB_NIC to set the correct public nic address."
+      exit
     fi
   }
 
@@ -193,11 +185,11 @@ if [ ! -f "$WG_CONFIG" ]; then
     echo "   1) 51820 (Recommended)"
     echo "   2) Custom (Advanced)"
     echo "   3) Random [1024-65535]"
-    until [[ "$PORT_CHOICE_SETTINGS" =~ ^[1-3]$ ]]; do
-      read -rp "Port choice [1-3]: " -e -i 1 PORT_CHOICE_SETTINGS
+    until [[ "$SERVER_PORT_SETTINGS" =~ ^[1-3]$ ]]; do
+      read -rp "Port choice [1-3]: " -e -i 1 SERVER_PORT_SETTINGS
     done
     # Apply port response
-    case $PORT_CHOICE_SETTINGS in
+    case $SERVER_PORT_SETTINGS in
     1)
       SERVER_PORT="51820"
       ;;
@@ -430,13 +422,13 @@ if [ ! -f "$WG_CONFIG" ]; then
   # Install WireGuard Server
   function install-wireguard-server() {
     # Installation begins here.
-    if [ "$DISTRO" == "ubuntu" ] && [ "$VERSION" == "19.10" ]; then
+    if [ "$DISTRO" == "ubuntu" ] && [ "$DISTRO_VERSION" == "19.10" ]; then
       apt-get update
       apt-get install linux-headers-"$(uname -r)" -y
       apt-get install wireguard qrencode haveged -y
     fi
     # shellcheck disable=SC2235
-    if [ "$DISTRO" == "ubuntu" ] && ([ "$VERSION" == "16.04" ] || [ "$VERSION" == "18.04" ]); then
+    if [ "$DISTRO" == "ubuntu" ] && ([ "$DISTRO_VERSION" == "16.04" ] || [ "$DISTRO_VERSION" == "18.04" ]); then
       apt-get update
       apt-get install software-properties-common -y
       add-apt-repository ppa:wireguard/wireguard -y
@@ -470,19 +462,19 @@ if [ ! -f "$WG_CONFIG" ]; then
       pacman -Syu --noconfirm haveged qrencode iptables
       pacman -Syu --noconfirm wireguard-tools wireguard-arch
     fi
-    if [ "$DISTRO" = "fedora" ] && [ "$VERSION" == "32" ]; then
+    if [ "$DISTRO" = "fedora" ] && [ "$DISTRO_VERSION" == "32" ]; then
       dnf update -y
       dnf install kernel-headers-"$(uname -r)" kernel-devel-"$(uname -r)" -y
       dnf install qrencode wireguard-tools haveged -y
     fi
     # shellcheck disable=SC2235
-    if [ "$DISTRO" = "fedora" ] && ([ "$VERSION" == "30" ] || [ "$VERSION" == "31" ]); then
+    if [ "$DISTRO" = "fedora" ] && ([ "$DISTRO_VERSION" == "30" ] || [ "$DISTRO_VERSION" == "31" ]); then
       dnf update -y
       dnf copr enable jdoss/wireguard -y
       dnf install kernel-headers-"$(uname -r)" kernel-devel-"$(uname -r)" -y
       dnf install qrencode wireguard-dkms wireguard-tools haveged -y
     fi
-    if [ "$DISTRO" == "centos" ] && [ "$VERSION" == "8" ]; then
+    if [ "$DISTRO" == "centos" ] && [ "$DISTRO_VERSION" == "8" ]; then
       yum update -y
       yum install epel-release -y
       yum update -y
@@ -491,7 +483,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       yum copr enable jdoss/wireguard -y
       yum install wireguard-dkms wireguard-tools qrencode haveged -y
     fi
-    if [ "$DISTRO" == "centos" ] && [ "$VERSION" == "7" ]; then
+    if [ "$DISTRO" == "centos" ] && [ "$DISTRO_VERSION" == "7" ]; then
       yum update -y
       curl https://copr.fedorainfracloud.org/coprs/jdoss/wireguard/repo/epel-7/jdoss-wireguard-epel-7.repo --create-dirs -o /etc/yum.repos.d/wireguard.repo
       yum update -y
@@ -500,7 +492,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       yum install kernel-headers-"$(uname -r)" kernel-devel-"$(uname -r)" -y
       yum install wireguard-dkms wireguard-tools qrencode haveged -y
     fi
-    if [ "$DISTRO" == "redhat" ] && [ "$VERSION" == "8" ]; then
+    if [ "$DISTRO" == "redhat" ] && [ "$DISTRO_VERSION" == "8" ]; then
       yum update -y
       yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
       yum update -y
@@ -509,7 +501,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       yum copr enable jdoss/wireguard
       yum install wireguard-dkms wireguard-tools qrencode haveged -y
     fi
-    if [ "$DISTRO" == "redhat" ] && [ "$VERSION" == "7" ]; then
+    if [ "$DISTRO" == "redhat" ] && [ "$DISTRO_VERSION" == "7" ]; then
       yum update -y
       curl https://copr.fedorainfracloud.org/coprs/jdoss/wireguard/repo/epel-7/jdoss-wireguard-epel-7.repo --create-dirs -o /etc/yum.repos.d/wireguard.repo
       yum update -y
@@ -556,19 +548,20 @@ if [ ! -f "$WG_CONFIG" ]; then
     prefetch: yes
     qname-minimisation: yes
     prefetch-key: yes" >>/etc/unbound/unbound.conf
-        # We need to disable this so unbound works on ubuntu.
-        if pgrep systemd-journal; then
-          if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
+      fi
+      # We need to disable this so unbound works on ubuntu.
+      function stop-systemd-resolved() {
+        if [ "$DISTRO" == "ubuntu" ]; then
+          if pgrep systemd-journal; then
+            systemctl stop systemd-resolved
+            systemctl disable systemd-resolved
+          else
             service systemd-resolved stop
             service systemd-resolved disable
           fi
-        else
-          if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
-            systemctl stop systemd-resolved
-            systemctl disable systemd-resolved
-          fi
         fi
-      fi
+      }
+      stop-systemd-resolved
       if [ "$DISTRO" == "debian" ]; then
         # Install Unbound
         apt-get install unbound unbound-host e2fsprogs resolvconf -y
@@ -631,7 +624,7 @@ if [ ! -f "$WG_CONFIG" ]; then
     qname-minimisation: yes
     prefetch-key: yes" >>/etc/unbound/unbound.conf
       fi
-      if [ "$DISTRO" == "centos" ] && [ "$VERSION" == "8" ]; then
+      if [ "$DISTRO" == "centos" ] && [ "$DISTRO_VERSION" == "8" ]; then
         yum install unbound unbound-libs -y
         sed -i "s|# interface: 0.0.0.0$|interface: 10.8.0.1|" /etc/unbound/unbound.conf
         sed -i "s|# access-control: 127.0.0.0/8 allow|access-control: 10.8.0.1/24 allow|" /etc/unbound/unbound.conf
@@ -640,7 +633,7 @@ if [ ! -f "$WG_CONFIG" ]; then
         sed -i "s|# hide-version: no|hide-version: yes|" /etc/unbound/unbound.conf
         sed -i "s|use-caps-for-id: no|use-caps-for-id: yes|" /etc/unbound/unbound.conf
       fi
-      if [ "$DISTRO" == "centos" ] && [ "$VERSION" == "7" ]; then
+      if [ "$DISTRO" == "centos" ] && [ "$DISTRO_VERSION" == "7" ]; then
         yum install unbound unbound-libs resolvconf -y
         sed -i "s|# interface: 0.0.0.0$|interface: 10.8.0.1|" /etc/unbound/unbound.conf
         sed -i "s|# access-control: 127.0.0.0/8 allow|access-control: 10.8.0.1/24 allow|" /etc/unbound/unbound.conf
@@ -693,23 +686,25 @@ if [ ! -f "$WG_CONFIG" ]; then
       echo "nameserver 127.0.0.1" >/etc/resolv.conf
       # Diable the modification of the file
       chattr +i /etc/resolv.conf
-      # Restart unbound
-      if pgrep systemd-journal; then
-        if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
-          service unbound enable
-          service unbound restart
-        fi
-      else
-        if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
-          systemctl enable unbound
-          systemctl restart unbound
-        fi
-      fi
     fi
   }
 
   # Running Install Unbound
   install-unbound
+
+  # Enable Unbound as a serivce
+  function enable-unbound() {
+    if pgrep systemd-journal; then
+      service unbound enable
+      service unbound restart
+    else
+      systemctl enable unbound
+      systemctl restart unbound
+    fi
+  }
+
+  # Lets Enable Unbound
+  enable-unbound
 
   # WireGuard Set Config
   function wireguard-setconf() {
@@ -756,22 +751,24 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$CLIENT_NAME"-$WIREGUARD_P
     qrencode -t ansiutf8 -l L </etc/wireguard/clients/"$CLIENT_NAME"-$WIREGUARD_PUB_NIC.conf
     # Echo the file
     echo "Client Config --> /etc/wireguard/clients/$CLIENT_NAME-$WIREGUARD_PUB_NIC.conf"
-    # Restart WireGuard
-    if pgrep systemd-journal; then
-      if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
-        service wg-quick@$WIREGUARD_PUB_NIC enable
-        service wg-quick@$WIREGUARD_PUB_NIC restart
-      fi
-    else
-      if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
-        systemctl enable wg-quick@$WIREGUARD_PUB_NIC
-        systemctl restart wg-quick@$WIREGUARD_PUB_NIC
-      fi
-    fi
   }
 
   # Setting Up Wireguard Config
   wireguard-setconf
+
+  # Restart WireGuard
+  function enable-wireguard() {
+    if pgrep systemd-journal; then
+      service wg-quick@$WIREGUARD_PUB_NIC enable
+      service wg-quick@$WIREGUARD_PUB_NIC restart
+    else
+      systemctl enable wg-quick@$WIREGUARD_PUB_NIC
+      systemctl restart wg-quick@$WIREGUARD_PUB_NIC
+    fi
+  }
+
+  # Enable WireGuard as a service
+  enable-wireguard
 
 # After WireGuard Install
 else
@@ -795,46 +792,30 @@ else
     case $WIREGUARD_OPTIONS in
     1)
       if pgrep systemd-journal; then
-        if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
-          wg show
-        fi
+        wg show
       else
-        if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
-          sudo wg show
-        fi
+        wg show
       fi
       ;;
     2)
       if pgrep systemd-journal; then
-        if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
-          service wg-quick@$WIREGUARD_PUB_NIC start
-        fi
+        service wg-quick@$WIREGUARD_PUB_NIC start
       else
-        if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
-          systemctl start wg-quick@$WIREGUARD_PUB_NIC
-        fi
+        systemctl start wg-quick@$WIREGUARD_PUB_NIC
       fi
       ;;
     3)
       if pgrep systemd-journal; then
-        if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
-          service wg-quick@$WIREGUARD_PUB_NIC stop
-        fi
+        service wg-quick@$WIREGUARD_PUB_NIC stop
       else
-        if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
-          systemctl stop wg-quick@$WIREGUARD_PUB_NIC
-        fi
+        systemctl stop wg-quick@$WIREGUARD_PUB_NIC
       fi
       ;;
     4)
       if pgrep systemd-journal; then
-        if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
-          service wg-quick@$WIREGUARD_PUB_NIC restart
-        fi
+        service wg-quick@$WIREGUARD_PUB_NIC restart
       else
-        if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
-          systemctl restart wg-quick@$WIREGUARD_PUB_NIC
-        fi
+        systemctl restart wg-quick@$WIREGUARD_PUB_NIC
       fi
       ;;
     5)
@@ -879,13 +860,9 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
       echo "Client config --> /etc/wireguard/clients/$NEW_CLIENT_NAME-$WIREGUARD_PUB_NIC.conf"
       # Restart WireGuard
       if pgrep systemd-journal; then
-        if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
-          service wg-quick@$WIREGUARD_PUB_NIC restart
-        fi
+        service wg-quick@$WIREGUARD_PUB_NIC restart
       else
-        if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
-          systemctl restart wg-quick@$WIREGUARD_PUB_NIC
-        fi
+        systemctl restart wg-quick@$WIREGUARD_PUB_NIC
       fi
       ;;
     6)
@@ -896,21 +873,16 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
       read -rp "Type in Client Name : " -e REMOVECLIENT
       read -rp "Are you sure you want to remove $REMOVECLIENT ? (y/n): " -n 1 -r
       if [[ $REPLY =~ ^[Yy]$ ]]; then
-        echo
         # shellcheck disable=SC1117
-        sed -i "/\# $REMOVECLIENT start/,/\# $REMOVECLIENT end/d" $WG_CONFIG
+        echo sed -i "/\# $REMOVECLIENT start/,/\# $REMOVECLIENT end/d" $WG_CONFIG
         rm /etc/wireguard/clients/"$REMOVECLIENT"-$WIREGUARD_PUB_NIC.conf
+        echo "Client named $REMOVECLIENT has been removed."
       fi
       if pgrep systemd-journal; then
-        if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
-          service wg-quick@$WIREGUARD_PUB_NIC restart
-        fi
+        service wg-quick@$WIREGUARD_PUB_NIC restart
       else
-        if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
-          systemctl restart wg-quick@$WIREGUARD_PUB_NIC
-        fi
+        systemctl restart wg-quick@$WIREGUARD_PUB_NIC
       fi
-      echo "Client named $REMOVECLIENT has been removed."
       ;;
     7)
       # Uninstall Wireguard and purging files
@@ -919,23 +891,19 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
       if [ "$REMOVE_WIREGUARD" = "y" ]; then
         # Stop WireGuard
         if pgrep systemd-journal; then
-          if [[ $(service systemd-resolved status >/dev/null 2>&1) ]]; then
           # Disable WireGuard
           service wg-quick@$WIREGUARD_PUB_NIC disable
           wg-quick down $WIREGUARD_PUB_NIC
           # Disable Unbound
           service unbound disable
           service unbound stop
-          fi
         else
-          if [[ $(systemctl status systemd-resolved >/dev/null 2>&1) ]]; then
           # Disable WireGuard
           systemctl disable wg-quick@$WIREGUARD_PUB_NIC
           wg-quick down $WIREGUARD_PUB_NIC
           # Disable Unbound
           systemctl disable unbound
           systemctl stop unbound
-          fi
         fi
         if [ "$DISTRO" == "centos" ]; then
           yum remove wireguard qrencode haveged unbound unbound-host -y
@@ -971,11 +939,11 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
         rm -rf /etc/unbound
         # Allow the modification of the file
         chattr -i /etc/resolv.conf
-        # Remove localhost as the resolver
-        sed -i "s|nameserver 127.0.0.1||" /etc/resolv.conf
         # Going back to the old nameservers
         sed -i "s|#nameserver|nameserver|" /etc/resolv.conf
         sed -i "s|#search|search|" /etc/resolv.conf
+        # Remove localhost as the resolver
+        sed -i "s|nameserver 127.0.0.1||" /etc/resolv.conf
         # Diable the modification of the file
         chattr +i /etc/resolv.conf
       fi
