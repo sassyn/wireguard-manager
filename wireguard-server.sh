@@ -548,20 +548,14 @@ if [ ! -f "$WG_CONFIG" ]; then
     prefetch: yes
     qname-minimisation: yes
     prefetch-key: yes" >>/etc/unbound/unbound.conf
-      fi
-      # We need to disable this so unbound works on ubuntu.
-      function stop-systemd-resolved() {
-        if [ "$DISTRO" == "ubuntu" ]; then
-          if pgrep systemd-journal; then
-            systemctl stop systemd-resolved
-            systemctl disable systemd-resolved
-          else
-            service systemd-resolved stop
-            service systemd-resolved disable
-          fi
-        fi
-      }
-      stop-systemd-resolved
+  if pgrep systemd-journal; then
+    systemctl stop systemd-resolved
+    systemctl disable systemd-resolved
+  else
+    service systemd-resolved stop
+    service systemd-resolved disable
+  fi
+    fi
       if [ "$DISTRO" == "debian" ]; then
         # Install Unbound
         apt-get install unbound unbound-host e2fsprogs resolvconf -y
@@ -687,24 +681,17 @@ if [ ! -f "$WG_CONFIG" ]; then
       # Diable the modification of the file
       chattr +i /etc/resolv.conf
     fi
+    if pgrep systemd-journal; then
+      systemctl enable unbound
+      systemctl restart unbound
+    else
+      service unbound enable
+      service unbound restart
+    fi
   }
 
   # Running Install Unbound
   install-unbound
-
-  # Enable Unbound as a serivce
-  function enable-unbound() {
-    if pgrep systemd-journal; then
-      service unbound enable
-      service unbound restart
-    else
-      systemctl enable unbound
-      systemctl restart unbound
-    fi
-  }
-
-  # Lets Enable Unbound
-  enable-unbound
 
   # WireGuard Set Config
   function wireguard-setconf() {
@@ -751,24 +738,17 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$CLIENT_NAME"-$WIREGUARD_P
     qrencode -t ansiutf8 -l L </etc/wireguard/clients/"$CLIENT_NAME"-$WIREGUARD_PUB_NIC.conf
     # Echo the file
     echo "Client Config --> /etc/wireguard/clients/$CLIENT_NAME-$WIREGUARD_PUB_NIC.conf"
+    if pgrep systemd-journal; then
+      systemctl enable wg-quick@$WIREGUARD_PUB_NIC
+      systemctl restart wg-quick@$WIREGUARD_PUB_NIC
+    else
+      service wg-quick@$WIREGUARD_PUB_NIC enable
+      service wg-quick@$WIREGUARD_PUB_NIC restart
+    fi
   }
 
   # Setting Up Wireguard Config
   wireguard-setconf
-
-  # Restart WireGuard
-  function enable-wireguard() {
-    if pgrep systemd-journal; then
-      service wg-quick@$WIREGUARD_PUB_NIC enable
-      service wg-quick@$WIREGUARD_PUB_NIC restart
-    else
-      systemctl enable wg-quick@$WIREGUARD_PUB_NIC
-      systemctl restart wg-quick@$WIREGUARD_PUB_NIC
-    fi
-  }
-
-  # Enable WireGuard as a service
-  enable-wireguard
 
 # After WireGuard Install
 else
@@ -799,23 +779,23 @@ else
       ;;
     2)
       if pgrep systemd-journal; then
-        service wg-quick@$WIREGUARD_PUB_NIC start
-      else
         systemctl start wg-quick@$WIREGUARD_PUB_NIC
+      else
+        service wg-quick@$WIREGUARD_PUB_NIC start
       fi
       ;;
     3)
       if pgrep systemd-journal; then
-        service wg-quick@$WIREGUARD_PUB_NIC stop
-      else
         systemctl stop wg-quick@$WIREGUARD_PUB_NIC
+      else
+        service wg-quick@$WIREGUARD_PUB_NIC stop
       fi
       ;;
     4)
       if pgrep systemd-journal; then
-        service wg-quick@$WIREGUARD_PUB_NIC restart
-      else
         systemctl restart wg-quick@$WIREGUARD_PUB_NIC
+      else
+        service wg-quick@$WIREGUARD_PUB_NIC restart
       fi
       ;;
     5)
@@ -860,9 +840,9 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
       echo "Client config --> /etc/wireguard/clients/$NEW_CLIENT_NAME-$WIREGUARD_PUB_NIC.conf"
       # Restart WireGuard
       if pgrep systemd-journal; then
-        service wg-quick@$WIREGUARD_PUB_NIC restart
-      else
         systemctl restart wg-quick@$WIREGUARD_PUB_NIC
+      else
+        service wg-quick@$WIREGUARD_PUB_NIC restart
       fi
       ;;
     6)
@@ -879,9 +859,9 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
         echo "Client named $REMOVECLIENT has been removed."
       fi
       if pgrep systemd-journal; then
-        service wg-quick@$WIREGUARD_PUB_NIC restart
-      else
         systemctl restart wg-quick@$WIREGUARD_PUB_NIC
+      else
+        service wg-quick@$WIREGUARD_PUB_NIC restart
       fi
       ;;
     7)
@@ -892,18 +872,18 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
         # Stop WireGuard
         if pgrep systemd-journal; then
           # Disable WireGuard
-          service wg-quick@$WIREGUARD_PUB_NIC disable
-          wg-quick down $WIREGUARD_PUB_NIC
-          # Disable Unbound
-          service unbound disable
-          service unbound stop
-        else
-          # Disable WireGuard
           systemctl disable wg-quick@$WIREGUARD_PUB_NIC
           wg-quick down $WIREGUARD_PUB_NIC
           # Disable Unbound
           systemctl disable unbound
           systemctl stop unbound
+        else
+          # Disable WireGuard
+          service wg-quick@$WIREGUARD_PUB_NIC disable
+          wg-quick down $WIREGUARD_PUB_NIC
+          # Disable Unbound
+          service unbound disable
+          service unbound stop
         fi
         if [ "$DISTRO" == "centos" ]; then
           yum remove wireguard qrencode haveged unbound unbound-host -y
