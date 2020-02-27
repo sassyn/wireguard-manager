@@ -677,7 +677,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       sed -i "s|nameserver|#nameserver|" /etc/resolv.conf
       sed -i "s|search|#search|" /etc/resolv.conf
       # Set localhost as the DNS resolver
-      echo "nameserver 127.0.0.1" >/etc/resolv.conf
+      echo "nameserver 127.0.0.1" >>/etc/resolv.conf
       # Diable the modification of the file
       chattr +i /etc/resolv.conf
     fi
