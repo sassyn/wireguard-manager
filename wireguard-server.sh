@@ -548,14 +548,14 @@ if [ ! -f "$WG_CONFIG" ]; then
     prefetch: yes
     qname-minimisation: yes
     prefetch-key: yes" >>/etc/unbound/unbound.conf
-  if pgrep systemd-journal; then
-    systemctl stop systemd-resolved
-    systemctl disable systemd-resolved
-  else
-    service systemd-resolved stop
-    service systemd-resolved disable
-  fi
-    fi
+        if pgrep systemd-journal; then
+          systemctl stop systemd-resolved
+          systemctl disable systemd-resolved
+        else
+          service systemd-resolved stop
+          service systemd-resolved disable
+        fi
+      fi
       if [ "$DISTRO" == "debian" ]; then
         # Install Unbound
         apt-get install unbound unbound-host e2fsprogs resolvconf -y
