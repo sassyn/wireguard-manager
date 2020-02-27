@@ -1,10 +1,20 @@
 #!/bin/bash
 # Secure WireGuard For CentOS, Debian, Ubuntu, Arch, Fedora, Redhat, Raspbian
 
+# Function to check for root.
+function root-check() {
+  if [ "$EUID" -ne 0 ]; then
+    echo "You need to run this script as root."
+    exit
+  fi
+}
+
+# Check for root
+root-check
+
 # Checking For Virtualization
 function virt-check() {
   # Deny OpenVZ
-  if [[ $(command -v "systemd-detect-virt") ]]; then
     if [ "$(systemd-detect-virt)" == "openvz" ]; then
       echo "OpenVZ virtualization is not supported (yet)."
       exit
@@ -14,9 +24,6 @@ function virt-check() {
       echo "LXC virtualization is not supported (yet)."
       exit
     fi
-  else
-    echo "Warning: this script might not work correctly in your system."
-  fi
 }
 
 # Virtualization Check
@@ -31,10 +38,7 @@ function dist-check() {
     source $DIST_CHECK
     DISTRO=$ID
     # shellcheck disable=SC2034
-    VERSION=$VERSION_ID
-  else
-    echo "Your distribution is not supported (yet)."
-    exit
+    DISTRO_VERSION=$VERSION_ID
   fi
 }
 
@@ -44,13 +48,13 @@ dist-check
 # Install WireGuard Client
 function install-wireguard-client() {
   # Installation begins here.
-  if [ "$DISTRO" == "ubuntu" ] && [ "$VERSION" == "19.10" ]; then
+  if [ "$DISTRO" == "ubuntu" ] && [ "$DISTRO_VERSION" == "19.10" ]; then
     apt-get update
     apt-get install linux-headers-"$(uname -r)" -y
     apt-get install wireguard qrencode haveged resolvconf -y
   fi
   # shellcheck disable=SC2235
-  if [ "$DISTRO" == "ubuntu" ] && ([ "$VERSION" == "16.04" ] || [ "$VERSION" == "18.04" ]); then
+  if [ "$DISTRO" == "ubuntu" ] && ([ "$DISTRO_VERSION" == "16.04" ] || [ "$DISTRO_VERSION" == "18.04" ]); then
     apt-get update
     apt-get install software-properties-common -y
     add-apt-repository ppa:wireguard/wireguard -y
@@ -82,19 +86,19 @@ function install-wireguard-client() {
     pacman -Syu --noconfirm haveged qrencode iptables
     pacman -Syu --noconfirm wireguard-tools wireguard-arch resolvconf
   fi
-  if [ "$DISTRO" = 'fedora' ] && [ "$VERSION" == "32" ]; then
+  if [ "$DISTRO" = 'fedora' ] && [ "$DISTRO_VERSION" == "32" ]; then
     dnf update -y
     dnf install kernel-headers-"$(uname -r)" kernel-devel-"$(uname -r)" -y
     dnf install qrencode wireguard-tools haveged resolvconf -y
   fi
   # shellcheck disable=SC2235
-  if [ "$DISTRO" = 'fedora' ] && ([ "$VERSION" == "30" ] || [ "$VERSION" == "31" ]); then
+  if [ "$DISTRO" = 'fedora' ] && ([ "$DISTRO_VERSION" == "30" ] || [ "$DISTRO_VERSION" == "31" ]); then
     dnf update -y
     dnf copr enable jdoss/wireguard -y
     dnf install kernel-headers-"$(uname -r)" kernel-devel-"$(uname -r)" -y
     dnf install qrencode wireguard-dkms wireguard-tools haveged resolvconf -y
   fi
-  if [ "$DISTRO" == "centos" ] && [ "$VERSION" == "8" ]; then
+  if [ "$DISTRO" == "centos" ] && [ "$DISTRO_VERSION" == "8" ]; then
     yum update -y
     yum install epel-release -y
     yum update -y
@@ -103,7 +107,7 @@ function install-wireguard-client() {
     yum copr enable jdoss/wireguard -y
     yum install wireguard-dkms wireguard-tools qrencode haveged -y
   fi
-  if [ "$DISTRO" == "centos" ] && [ "$VERSION" == "7" ]; then
+  if [ "$DISTRO" == "centos" ] && [ "$DISTRO_VERSION" == "7" ]; then
     yum update -y
     curl https://copr.fedorainfracloud.org/coprs/jdoss/wireguard/repo/epel-7/jdoss-wireguard-epel-7.repo --create-dirs -o /etc/yum.repos.d/wireguard.repo
     yum update -y
@@ -112,7 +116,7 @@ function install-wireguard-client() {
     yum install kernel-headers-"$(uname -r)" kernel-devel-"$(uname -r)" -y
     yum install wireguard-dkms wireguard-tools qrencode haveged resolvconf -y
   fi
-  if [ "$DISTRO" == "redhat" ] && [ "$VERSION" == "8" ]; then
+  if [ "$DISTRO" == "redhat" ] && [ "$DISTRO_VERSION" == "8" ]; then
     yum update -y
     yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
     yum update -y
@@ -121,7 +125,7 @@ function install-wireguard-client() {
     yum copr enable jdoss/wireguard
     yum install wireguard-dkms wireguard-tools qrencode haveged resolvconf -y
   fi
-  if [ "$DISTRO" == "redhat" ] && [ "$VERSION" == "7" ]; then
+  if [ "$DISTRO" == "redhat" ] && [ "$DISTRO_VERSION" == "7" ]; then
     yum update -y
     curl https://copr.fedorainfracloud.org/coprs/jdoss/wireguard/repo/epel-7/jdoss-wireguard-epel-7.repo --create-dirs -o /etc/yum.repos.d/wireguard.repo
     yum update -y
