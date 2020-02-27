@@ -310,6 +310,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       )"
       ;;
     3)
+      # shellcheck disable=SC2034
       DISABLE_HOST="$(
         echo "net.ipv6.conf.all.disable_ipv6 = 1" >>/etc/sysctl.d/wireguard.conf
         echo "net.ipv6.conf.default.disable_ipv6 = 1" >>/etc/sysctl.d/wireguard.conf
