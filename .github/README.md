@@ -4,7 +4,6 @@
 [![GitHub issues](https://img.shields.io/github/issues/complexorganizations/wireguard-manager)](https://github.com/complexorganizations/wireguard-manager/issues)
 [![GitHub contributors](https://img.shields.io/github/contributors/complexorganizations/wireguard-manager)](https://github.com/complexorganizations/wireguard-manager/graphs/contributors)
 [![GitHub forks](https://img.shields.io/github/forks/complexorganizations/wireguard-manager?style=social)](https://github.com/complexorganizations/wireguard-manager/fork)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/complexorganizations/wireguard-manager/ShellCheck)](https://github.com/complexorganizations/wireguard-manager/actions)
 
 ---
 ### What is WireGuard?
@@ -157,7 +156,6 @@ Using a browser based development environment:
 
 Channels:
 - [Master](https://github.com/complexorganizations/wireguard-manager/tree/master) (Stable)
-- [Dev](https://github.com/complexorganizations/wireguard-manager/tree/dev) (Development)
 
 ### Debugging
 ```
