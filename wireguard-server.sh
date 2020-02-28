@@ -183,9 +183,9 @@ if [ ! -f "$WG_CONFIG" ]; then
   # Determine host port
   function set-port() {
     echo "What port do you want WireGuard server to listen to?"
-    echo "   1) 51820 (Recommended)"
-    echo "   2) Custom (Advanced)"
-    echo "   3) Random [1024-65535]"
+    echo "  1) 51820 (Recommended)"
+    echo "  2) Custom (Advanced)"
+    echo "  3) Random [1024-65535]"
     until [[ "$SERVER_PORT_SETTINGS" =~ ^[1-3]$ ]]; do
       read -rp "Port choice [1-3]: " -e -i 1 SERVER_PORT_SETTINGS
     done
@@ -212,9 +212,9 @@ if [ ! -f "$WG_CONFIG" ]; then
   # Determine Keepalive interval.
   function nat-keepalive() {
     echo "What do you want your keepalive interval to be?"
-    echo "   1) 25 (Default)"
-    echo "   2) 0"
-    echo "   3) Custom (Advanced)"
+    echo "  1) 25 (Default)"
+    echo "  2) Custom (Advanced)"
+    echo "  3) Random [1-25]"
     until [[ "$NAT_CHOICE_SETTINGS" =~ ^[1-3]$ ]]; do
       read -rp "Nat Choice [1-3]: " -e -i 1 NAT_CHOICE_SETTINGS
     done
@@ -224,12 +224,12 @@ if [ ! -f "$WG_CONFIG" ]; then
       NAT_CHOICE="25"
       ;;
     2)
-      NAT_CHOICE="0"
-      ;;
-    3)
       until [[ "$NAT_CHOICE" =~ ^[0-9]+$ ]] && [ "$NAT_CHOICE" -ge 1 ] && [ "$NAT_CHOICE" -le 25 ]; do
         read -rp "Custom NAT [0-25]: " -e -i 25 NAT_CHOICE
       done
+      ;;
+    3)
+      NAT_CHOICE=$(shuf -i1-25 -n1)
       ;;
     esac
   }
@@ -240,9 +240,9 @@ if [ ! -f "$WG_CONFIG" ]; then
   # Custom MTU or default settings
   function mtu-set() {
     echo "What MTU do you want to use?"
-    echo "   1) 1280 (Recommended)"
-    echo "   2) 1420"
-    echo "   3) Custom (Advanced)"
+    echo "  1) 1280 (Recommended)"
+    echo "  2) 1420"
+    echo "  3) Custom (Advanced)"
     until [[ "$MTU_CHOICE_SETTINGS" =~ ^[1-3]$ ]]; do
       read -rp "MTU choice [1-3]: " -e -i 1 MTU_CHOICE_SETTINGS
     done
@@ -267,8 +267,8 @@ if [ ! -f "$WG_CONFIG" ]; then
   # What ip version would you like to be available on this VPN?
   function ipvx-select() {
     echo "What IPv do you want to use to connect to WireGuard server?"
-    echo "   1) IPv4 (Recommended)"
-    echo "   2) IPv6 (Advanced)"
+    echo "  1) IPv4 (Recommended)"
+    echo "  2) IPv6 (Advanced)"
     until [[ "$SERVER_HOST_SETTINGS" =~ ^[1-2]$ ]]; do
       read -rp "IP Choice [1-2]: " -e -i 1 SERVER_HOST_SETTINGS
     done
@@ -288,9 +288,9 @@ if [ ! -f "$WG_CONFIG" ]; then
   # Do you want to disable IPv4 or IPv6 or leave them both enabled?
   function disable-ipvx() {
     echo "Do you want to disable IPv4 or IPv6 on the server?"
-    echo "   1) No (Recommended)"
-    echo "   2) IPV4"
-    echo "   3) IPV6"
+    echo "  1) No (Recommended)"
+    echo "  2) IPV4"
+    echo "  3) IPV6"
     until [[ "$DISABLE_HOST_SETTINGS" =~ ^[1-3]$ ]]; do
       read -rp "Disable Host Choice [1-3]: " -e -i 1 DISABLE_HOST_SETTINGS
     done
@@ -329,8 +329,8 @@ if [ ! -f "$WG_CONFIG" ]; then
   # Would you like to allow connections to your LAN neighbors?
   function client-allowed-ip() {
     echo "What traffic do you want the client to forward to wireguard?"
-    echo "   1) Everything (Recommended)"
-    echo "   2) Exclude Private IPs (Allows LAN IP connections)"
+    echo "  1) Everything (Recommended)"
+    echo "  2) Exclude Private IPs (Allows LAN IP connections)"
     until [[ "$CLIENT_ALLOWED_IP_SETTINGS" =~ ^[1-2]$ ]]; do
       read -rp "Client Allowed IP Choice [1-2]: " -e -i 1 CLIENT_ALLOWED_IP_SETTINGS
     done
@@ -355,17 +355,17 @@ if [ ! -f "$WG_CONFIG" ]; then
     fi
     if [ "$INSTALL_UNBOUND" == "n" ]; then
       echo "Which DNS do you want to use with the VPN?"
-      echo "   1) AdGuard (Recommended)"
-      echo "   2) Google"
-      echo "   3) OpenDNS"
-      echo "   4) Cloudflare"
-      echo "   5) Verisign"
-      echo "   6) Quad9"
-      echo "   7) FDN"
-      echo "   8) DNS.WATCH"
-      echo "   9) Yandex Basic"
-      echo "   10) Clean Browsing"
-      echo "   11) Custom (Advanced)"
+      echo "  1) AdGuard (Recommended)"
+      echo "  2) Google"
+      echo "  3) OpenDNS"
+      echo "  4) Cloudflare"
+      echo "  5) Verisign"
+      echo "  6) Quad9"
+      echo "  7) FDN"
+      echo "  8) DNS.WATCH"
+      echo "  9) Yandex Basic"
+      echo "  10) Clean Browsing"
+      echo "  11) Custom (Advanced)"
       read -rp "DNS [1-11]: " -e -i 1 CLIENT_DNS_SETTINGS
       case $CLIENT_DNS_SETTINGS in
       1)
