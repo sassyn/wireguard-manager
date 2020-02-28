@@ -858,6 +858,9 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
         rm /etc/wireguard/clients/"$REMOVECLIENT"-$WIREGUARD_PUB_NIC.conf
         echo "Client named $REMOVECLIENT has been removed."
       fi
+      if [[ $REPLY =~ ^[Nn]$ ]]; then
+        exit
+      fi
       if pgrep systemd-journal; then
         systemctl restart wg-quick@$WIREGUARD_PUB_NIC
       else
