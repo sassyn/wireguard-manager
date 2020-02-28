@@ -399,7 +399,7 @@ if [ ! -f "$WG_CONFIG" ]; then
         CLIENT_DNS="185.228.168.9,185.228.169.9,2a0d:2a00:1::2,2a0d:2a00:2::2"
         ;;
       11)
-        read -rp "Custom DNS (IPv4 IPv6):" -e -i "176.103.130.130,176.103.130.131,2a00:5a60::ad1:0ff,2a00:5a60::ad2:0ff" CLIENT_DNS
+        read -rp "Custom DNS (IPv4 IPv6):" -e -i "176.103.130.130,2a00:5a60::ad1:0ff" CLIENT_DNS
         ;;
       esac
     fi
