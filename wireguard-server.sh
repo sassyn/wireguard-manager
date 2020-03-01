@@ -520,7 +520,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       # Installation Begins Here
       if [ "$DISTRO" == "ubuntu" ]; then
         # Install Unbound
-        apt-get install unbound unbound-host e2fsprogs resolvconf -y
+        apt-get install unbound unbound-host e2fsprogs resolvconf ifupdown2 -y
         # Remove Config
         rm -f /etc/unbound/unbound.conf
         # Set Config
@@ -558,7 +558,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       fi
       if [ "$DISTRO" == "debian" ]; then
         # Install Unbound
-        apt-get install unbound unbound-host e2fsprogs resolvconf -y
+        apt-get install unbound unbound-host e2fsprogs resolvconf ifupdown2 -y
         # Remove Config
         rm -f /etc/unbound/unbound.conf
         # Set Config
@@ -589,7 +589,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       fi
       if [ "$DISTRO" == "raspbian" ]; then
         # Install Unbound
-        apt-get install unbound unbound-host e2fsprogs resolvconf -y
+        apt-get install unbound unbound-host e2fsprogs resolvconf ifupdown2 -y
         # Remove Config
         rm -f /etc/unbound/unbound.conf
         # Set Config
