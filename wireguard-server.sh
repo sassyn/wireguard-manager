@@ -85,6 +85,18 @@ function headless-install() {
 # No GUI
 headless-install
 
+# Update the script
+function update-script() {
+  if [ "$UPDATE_SCRIPT" == "y" ]; then
+    curl -o /etc/wireguard/wireguard-server.sh https://raw.githubusercontent.com/complexorganizations/wireguard-installer-manager/master/wireguard-server.sh
+    sleep 3
+    chmod +x /etc/wireguard/wireguard-server.sh
+  fi
+}
+
+# Update the script.
+update-script
+
 # Wireguard Public Network Interface
 WIREGUARD_PUB_NIC="wg0"
 # Location For WG_CONFIG
