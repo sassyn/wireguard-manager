@@ -63,7 +63,6 @@ function check-apps() {
 # Run the function and check for apps
 check-apps
 
-# Headless Install
 # Skips all questions and just get a client conf after install.
 function headless-install() {
   if [ "$HEADLESS_INSTALL" == "y" ]; then
@@ -84,18 +83,6 @@ function headless-install() {
 
 # No GUI
 headless-install
-
-# Update the script
-function update-script() {
-  if [ "$UPDATE_SCRIPT" == "y" ]; then
-    curl -o /etc/wireguard/wireguard-server.sh https://raw.githubusercontent.com/complexorganizations/wireguard-installer-manager/master/wireguard-server.sh
-    sleep 3
-    chmod +x /etc/wireguard/wireguard-server.sh
-  fi
-}
-
-# Update the script.
-update-script
 
 # Wireguard Public Network Interface
 WIREGUARD_PUB_NIC="wg0"
