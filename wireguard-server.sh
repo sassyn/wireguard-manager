@@ -683,9 +683,9 @@ if [ ! -f "$WG_CONFIG" ]; then
       curl https://www.internic.net/domain/named.cache --create-dirs -o /etc/unbound/root.hints
       # Setting Client DNS For Unbound On WireGuard
       CLIENT_DNS="10.8.0.1"
-      # Allow the modification of the file	
-      chattr -i /etc/resolv.conf	
-      # Disable previous DNS servers	
+      # Allow the modification of the file
+      chattr -i /etc/resolv.conf
+      # Disable previous DNS servers
       sed -i "s|nameserver|#nameserver|" /etc/resolv.conf
       sed -i "s|search|#search|" /etc/resolv.conf
       # Set localhost as the DNS resolver
