@@ -50,7 +50,6 @@ In your `/etc/wireguard/clients` directory, you will have `.conf` files. These a
 - Uninstall WireGuard Interface
 - Update this script
 
-
 ---
 ### Features
 - Installs and configures a ready-to-use WireGuard Interface
@@ -140,9 +139,6 @@ Is there WireGuard documentation?
 
 How do i install wireguard without the questions? (Headless Install) ***Server Only***
 - ```HEADLESS_INSTALL=y /etc/wireguard/wireguard-server.sh```
-
-How do i update this wireguard script?
-- ```UPDATE_SCRIPT=y /etc/wireguard/wireguard-server.sh```
 
 Official Links
 - Homepage: https://www.wireguard.com
