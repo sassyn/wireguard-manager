@@ -268,7 +268,7 @@ if [ ! -f "$WG_CONFIG" ]; then
     echo "What IPv do you want to use to connect to WireGuard server?"
     echo "  1) IPv4 (Recommended)"
     echo "  2) IPv6"
-    echo "  3) Domain (Advanced)"
+    echo "  3) Custom (Advanced)"
     until [[ "$SERVER_HOST_SETTINGS" =~ ^[1-3]$ ]]; do
       read -rp "IP Choice [1-3]: " -e -i 1 SERVER_HOST_SETTINGS
     done
@@ -333,7 +333,7 @@ if [ ! -f "$WG_CONFIG" ]; then
   function client-allowed-ip() {
     echo "What traffic do you want the client to forward to wireguard?"
     echo "  1) Everything (Recommended)"
-    echo "  2) Exclude Private IPs Allows LAN IP connections"
+    echo "  2) Exclude Private IPs"
     echo "  3) Custom (Advanced)"
     until [[ "$CLIENT_ALLOWED_IP_SETTINGS" =~ ^[1-3]$ ]]; do
       read -rp "Client Allowed IP Choice [1-3]: " -e -i 1 CLIENT_ALLOWED_IP_SETTINGS
