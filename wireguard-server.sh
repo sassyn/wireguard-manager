@@ -267,9 +267,10 @@ if [ ! -f "$WG_CONFIG" ]; then
   function ipvx-select() {
     echo "What IPv do you want to use to connect to WireGuard server?"
     echo "  1) IPv4 (Recommended)"
-    echo "  2) IPv6 (Advanced)"
-    until [[ "$SERVER_HOST_SETTINGS" =~ ^[1-2]$ ]]; do
-      read -rp "IP Choice [1-2]: " -e -i 1 SERVER_HOST_SETTINGS
+    echo "  2) IPv6"
+    echo "  3) Domain (Advanced)"
+    until [[ "$SERVER_HOST_SETTINGS" =~ ^[1-3]$ ]]; do
+      read -rp "IP Choice [1-3]: " -e -i 1 SERVER_HOST_SETTINGS
     done
     case $SERVER_HOST_SETTINGS in
     1)
@@ -277,6 +278,9 @@ if [ ! -f "$WG_CONFIG" ]; then
       ;;
     2)
       SERVER_HOST="[$SERVER_HOST_V6]"
+      ;;
+    3)
+      read -rp "Custom Domain: " -e -i "example.com" SERVER_HOST
       ;;
     esac
   }
@@ -329,9 +333,10 @@ if [ ! -f "$WG_CONFIG" ]; then
   function client-allowed-ip() {
     echo "What traffic do you want the client to forward to wireguard?"
     echo "  1) Everything (Recommended)"
-    echo "  2) Exclude Private IPs (Allows LAN IP connections)"
-    until [[ "$CLIENT_ALLOWED_IP_SETTINGS" =~ ^[1-2]$ ]]; do
-      read -rp "Client Allowed IP Choice [1-2]: " -e -i 1 CLIENT_ALLOWED_IP_SETTINGS
+    echo "  2) Exclude Private IPs Allows LAN IP connections"
+    echo "  3) Custom (Advanced)"
+    until [[ "$CLIENT_ALLOWED_IP_SETTINGS" =~ ^[1-3]$ ]]; do
+      read -rp "Client Allowed IP Choice [1-3]: " -e -i 1 CLIENT_ALLOWED_IP_SETTINGS
     done
     case $CLIENT_ALLOWED_IP_SETTINGS in
     1)
@@ -339,6 +344,9 @@ if [ ! -f "$WG_CONFIG" ]; then
       ;;
     2)
       CLIENT_ALLOWED_IP="0.0.0.0/5, 8.0.0.0/7, 11.0.0.0/8, 12.0.0.0/6, 16.0.0.0/4, 32.0.0.0/3, 64.0.0.0/2, 128.0.0.0/3, 160.0.0.0/5, 168.0.0.0/6, 172.0.0.0/12, 172.32.0.0/11, 172.64.0.0/10, 172.128.0.0/9, 173.0.0.0/8, 174.0.0.0/7, 176.0.0.0/4, 192.0.0.0/9, 192.128.0.0/11, 192.160.0.0/13, 192.169.0.0/16, 192.170.0.0/15, 192.172.0.0/14, 192.176.0.0/12, 192.192.0.0/10, 193.0.0.0/8, 194.0.0.0/7, 196.0.0.0/6, 200.0.0.0/5, 208.0.0.0/4, ::/0, 176.103.130.130/32, 176.103.130.131/32"
+      ;;
+    3)
+      read -rp "Custom IPs: " -e -i "0.0.0.0/0,::/0" CLIENT_ALLOWED_IP
       ;;
     esac
   }
