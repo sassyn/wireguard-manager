@@ -154,9 +154,6 @@ Using a browser based development environment:
 
 [![Open in Gitpod](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/complexorganizations/wireguard-manager)
 
-Channels:
-- [Master](https://github.com/complexorganizations/wireguard-manager/tree/master) (Stable)
-
 ### Debugging
 ```
 git clone https://github.com/complexorganizations/wireguard-manager /etc/wireguard/
