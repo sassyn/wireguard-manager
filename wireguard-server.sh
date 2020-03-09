@@ -107,28 +107,11 @@ if [ ! -f "$WG_CONFIG" ]; then
   # IPv6 Getaway
   GATEWAY_ADDRESS_V6="${PRIVATE_SUBNET_V6::-4}1"
 
-  # Detect IPV4
-  function detect-ipv4() {
-    if type ping >/dev/null 2>&1; then
-      PING="ping -c3 ipv4.google.com > /dev/null 2>&1"
-    else
-      PING6="ping -4 -c3 ipv4.google.com > /dev/null 2>&1"
-    fi
-    if eval "$PING"; then
-      IPV4_SUGGESTION="y"
-    else
-      IPV4_SUGGESTION="n"
-    fi
-  }
-
-  # Detect IPV4
-  detect-ipv4
-
   # Test outward facing IPV4
   function test-connectivity-v4() {
     if [ "$SERVER_HOST_V4" == "" ]; then
       SERVER_HOST_V4="$(curl --silent ipv4.icanhazip.com)"
-      read -rp "System public IPV4 address is $SERVER_HOST_V4 Is that correct? [y/n]: " -e -i "$IPV4_SUGGESTION" CONFIRM
+      read -rp "System public IPV4 address is $SERVER_HOST_V4 Is that correct? [y/n]: " -e -i y CONFIRM
     fi
     if [ "$CONFIRM" == "n" ]; then
       echo "Aborted. Use environment variable SERVER_HOST_V4 to set the correct public IP address."
@@ -138,28 +121,11 @@ if [ ! -f "$WG_CONFIG" ]; then
   # Test IPV4 Connectivity
   test-connectivity-v4
 
-  # Detect IPV6
-  function detect-ipv6() {
-    if type ping >/dev/null 2>&1; then
-      PING6="ping6 -c3 ipv6.google.com > /dev/null 2>&1"
-    else
-      PING6="ping -6 -c3 ipv6.google.com > /dev/null 2>&1"
-    fi
-    if eval "$PING6"; then
-      IPV6_SUGGESTION="y"
-    else
-      IPV6_SUGGESTION="n"
-    fi
-  }
-
-  # Test IPV6 Connectivity
-  detect-ipv6
-
   # Test outward facing IPV6
   function test-connectivity-v6() {
     if [ "$SERVER_HOST_V6" == "" ]; then
       SERVER_HOST_V6="$(curl --silent ipv6.icanhazip.com)"
-      read -rp "System public IPV6 address is $SERVER_HOST_V6 Is that correct? [y/n]: " -e -i "$IPV6_SUGGESTION" CONFIRM
+      read -rp "System public IPV6 address is $SERVER_HOST_V6 Is that correct? [y/n]: " -e -i y CONFIRM
     fi
     if [ "$CONFIRM" == "n" ]; then
       echo "Aborted. Use environment variable SERVER_HOST_V6 to set the correct public IP address."
