@@ -58,6 +58,11 @@ function check-apps() {
     echo "Error: ping is not installed, please install ping." >&2
     exit
   fi
+  # System requirements (shuf)
+  if ! [ -x "$(command -v shuf)" ]; then
+    echo "Error: shuf is not installed, please install shuf." >&2
+    exit
+  fi
 }
 
 # Run the function and check for apps
