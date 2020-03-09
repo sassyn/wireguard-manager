@@ -432,7 +432,7 @@ if [ ! -f "$WG_CONFIG" ]; then
     if [ "$DISTRO" == "ubuntu" ] && [ "$DISTRO_VERSION" == "19.10" ]; then
       apt-get update
       apt-get install linux-headers-"$(uname -r)" -y
-      apt-get install wireguard qrencode haveged ifupdown2 -y
+      apt-get install wireguard qrencode haveged ifupdown -y
     fi
     # shellcheck disable=SC2235
     if [ "$DISTRO" == "ubuntu" ] && ([ "$DISTRO_VERSION" == "16.04" ] || [ "$DISTRO_VERSION" == "18.04" ]); then
@@ -441,7 +441,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       add-apt-repository ppa:wireguard/wireguard -y
       apt-get update
       apt-get install linux-headers-"$(uname -r)" -y
-      apt-get install wireguard qrencode haveged ifupdown2 -y
+      apt-get install wireguard qrencode haveged ifupdown -y
     fi
     if [ "$DISTRO" == "debian" ]; then
       apt-get update
@@ -450,7 +450,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       printf "Package: *\nPin: release a=unstable\nPin-Priority: 90\n" >>/etc/apt/preferences.d/limit-unstable
       apt-get update
       apt-get install linux-headers-"$(uname -r)" -y
-      apt-get install wireguard qrencode haveged ifupdown2 -y
+      apt-get install wireguard qrencode haveged ifupdown -y
     fi
     if [ "$DISTRO" == "raspbian" ]; then
       apt-get update
@@ -461,7 +461,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       printf "Package: *\nPin: release a=unstable\nPin-Priority: 90\n" >>/etc/apt/preferences.d/limit-unstable
       apt-get update
       apt-get install raspberrypi-kernel-headers -y
-      apt-get install wireguard qrencode haveged ifupdown2 -y
+      apt-get install wireguard qrencode haveged ifupdown -y
     fi
     if [ "$DISTRO" == "arch" ]; then
       pacman -Syu
