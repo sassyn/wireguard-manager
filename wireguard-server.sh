@@ -522,7 +522,7 @@ if [ ! -f "$WG_CONFIG" ]; then
         yum install unbound unbound-libs resolvconf -y
       fi
       if [ "$DISTRO" == "rhel" ]; then
-        yum install unbound unbound-libs resolvconf -y
+        yum install unbound unbound-libs -y
       fi
       if [ "$DISTRO" == "fedora" ]; then
         dnf install unbound unbound-host resolvconf -y
