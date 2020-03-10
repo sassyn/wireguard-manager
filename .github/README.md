@@ -4,6 +4,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/complexorganizations/wireguard-manager)](https://github.com/complexorganizations/wireguard-manager/issues)
 [![GitHub contributors](https://img.shields.io/github/contributors/complexorganizations/wireguard-manager)](https://github.com/complexorganizations/wireguard-manager/graphs/contributors)
 [![GitHub forks](https://img.shields.io/github/forks/complexorganizations/wireguard-manager?style=social)](https://github.com/complexorganizations/wireguard-manager/fork)
+[![GitHub sponsor](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub)](https://github.com/sponsors/Prajwal-Koirala)
 
 ---
 ### What is WireGuard?
