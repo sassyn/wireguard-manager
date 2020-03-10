@@ -117,7 +117,7 @@ function install-wireguard-client() {
     yum install kernel-headers-"$(uname -r)" kernel-devel-"$(uname -r)" -y
     yum install wireguard-dkms wireguard-tools qrencode haveged resolvconf -y
   fi
-  if [ "$DISTRO" == "redhat" ] && [ "$DISTRO_VERSION" == "8" ]; then
+  if [ "$DISTRO" == "rhel" ] && [ "$DISTRO_VERSION" == "8" ]; then
     yum update -y
     yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
     yum update -y
@@ -126,7 +126,7 @@ function install-wireguard-client() {
     yum copr enable jdoss/wireguard
     yum install wireguard-dkms wireguard-tools qrencode haveged resolvconf -y
   fi
-  if [ "$DISTRO" == "redhat" ] && [ "$DISTRO_VERSION" == "7" ]; then
+  if [ "$DISTRO" == "rhel" ] && [ "$DISTRO_VERSION" == "7" ]; then
     yum update -y
     curl https://copr.fedorainfracloud.org/coprs/jdoss/wireguard/repo/epel-7/jdoss-wireguard-epel-7.repo --create-dirs -o /etc/yum.repos.d/wireguard.repo
     yum update -y
