@@ -511,6 +511,7 @@ if [ ! -f "$WG_CONFIG" ]; then
     interface: ::0
     max-udp-size: 3072
     access-control: 0.0.0.0/0                 refuse
+    access-control: ::0                       refuse
     access-control: 10.8.0.0/24               allow
     access-control: 127.0.0.1                 allow
     private-address: 10.8.0.0/24
@@ -549,6 +550,7 @@ if [ ! -f "$WG_CONFIG" ]; then
     interface: ::0
     max-udp-size: 3072
     access-control: 0.0.0.0/0                 refuse
+    access-control: ::0                       refuse
     access-control: 10.8.0.0/24               allow
     access-control: 127.0.0.1                 allow
     private-address: 10.8.0.0/24
@@ -580,6 +582,7 @@ if [ ! -f "$WG_CONFIG" ]; then
     interface: ::0
     max-udp-size: 3072
     access-control: 0.0.0.0/0                 refuse
+    access-control: ::0                       refuse
     access-control: 10.8.0.0/24               allow
     access-control: 127.0.0.1                 allow
     private-address: 10.8.0.0/24
@@ -598,52 +601,158 @@ if [ ! -f "$WG_CONFIG" ]; then
       fi
       if [ "$DISTRO" == "centos" ] && [ "$DISTRO_VERSION" == "8" ]; then
         yum install unbound unbound-libs -y
-        sed -i "s|# interface: 0.0.0.0$|interface: 10.8.0.1|" /etc/unbound/unbound.conf
-        sed -i "s|# access-control: 127.0.0.0/8 allow|access-control: 10.8.0.1/24 allow|" /etc/unbound/unbound.conf
-        sed -i "s|# interface: ::0$|interface: 127.0.0.1|" /etc/unbound/unbound.conf
-        sed -i "s|# hide-identity: no|hide-identity: yes|" /etc/unbound/unbound.conf
-        sed -i "s|# hide-version: no|hide-version: yes|" /etc/unbound/unbound.conf
-        sed -i "s|use-caps-for-id: no|use-caps-for-id: yes|" /etc/unbound/unbound.conf
+        # Remove Config
+        rm -f /etc/unbound/unbound.conf
+        # Set Config
+        echo "server:
+    num-threads: 4
+    verbosity: 1
+    root-hints: /etc/unbound/root.hints
+    auto-trust-anchor-file: /var/lib/unbound/root.key
+    interface: 0.0.0.0
+    interface: ::0
+    max-udp-size: 3072
+    access-control: 0.0.0.0/0                 refuse
+    access-control: ::0                       refuse
+    access-control: 10.8.0.0/24               allow
+    access-control: 127.0.0.1                 allow
+    private-address: 10.8.0.0/24
+    hide-identity: yes
+    hide-version: yes
+    harden-glue: yes
+    harden-dnssec-stripped: yes
+    harden-referral-path: yes
+    unwanted-reply-threshold: 10000000
+    val-log-level: 1
+    cache-min-ttl: 1800
+    cache-max-ttl: 14400
+    prefetch: yes
+    qname-minimisation: yes
+    prefetch-key: yes" >>/etc/unbound/unbound.conf
       fi
       if [ "$DISTRO" == "centos" ] && [ "$DISTRO_VERSION" == "7" ]; then
         yum install unbound unbound-libs resolvconf -y
-        sed -i "s|# interface: 0.0.0.0$|interface: 10.8.0.1|" /etc/unbound/unbound.conf
-        sed -i "s|# access-control: 127.0.0.0/8 allow|access-control: 10.8.0.1/24 allow|" /etc/unbound/unbound.conf
-        sed -i "s|# interface: ::0$|interface: 127.0.0.1|" /etc/unbound/unbound.conf
-        sed -i "s|# hide-identity: no|hide-identity: yes|" /etc/unbound/unbound.conf
-        sed -i "s|# hide-version: no|hide-version: yes|" /etc/unbound/unbound.conf
-        sed -i "s|use-caps-for-id: no|use-caps-for-id: yes|" /etc/unbound/unbound.conf
+        # Remove Config
+        rm -f /etc/unbound/unbound.conf
+        # Set Config
+        echo "server:
+    num-threads: 4
+    verbosity: 1
+    root-hints: /etc/unbound/root.hints
+    auto-trust-anchor-file: /var/lib/unbound/root.key
+    interface: 0.0.0.0
+    interface: ::0
+    max-udp-size: 3072
+    access-control: 0.0.0.0/0                 refuse
+    access-control: ::0                       refuse
+    access-control: 10.8.0.0/24               allow
+    access-control: 127.0.0.1                 allow
+    private-address: 10.8.0.0/24
+    hide-identity: yes
+    hide-version: yes
+    harden-glue: yes
+    harden-dnssec-stripped: yes
+    harden-referral-path: yes
+    unwanted-reply-threshold: 10000000
+    val-log-level: 1
+    cache-min-ttl: 1800
+    cache-max-ttl: 14400
+    prefetch: yes
+    qname-minimisation: yes
+    prefetch-key: yes" >>/etc/unbound/unbound.conf
+      fi
+      if [ "$DISTRO" == "rhel" ]; then
+        yum install unbound unbound-libs resolvconf -y
+        # Remove Config
+        rm -f /etc/unbound/unbound.conf
+        # Set Config
+        echo "server:
+    num-threads: 4
+    verbosity: 1
+    root-hints: /etc/unbound/root.hints
+    auto-trust-anchor-file: /var/lib/unbound/root.key
+    interface: 0.0.0.0
+    interface: ::0
+    max-udp-size: 3072
+    access-control: 0.0.0.0/0                 refuse
+    access-control: ::0                       refuse
+    access-control: 10.8.0.0/24               allow
+    access-control: 127.0.0.1                 allow
+    private-address: 10.8.0.0/24
+    hide-identity: yes
+    hide-version: yes
+    harden-glue: yes
+    harden-dnssec-stripped: yes
+    harden-referral-path: yes
+    unwanted-reply-threshold: 10000000
+    val-log-level: 1
+    cache-min-ttl: 1800
+    cache-max-ttl: 14400
+    prefetch: yes
+    qname-minimisation: yes
+    prefetch-key: yes" >>/etc/unbound/unbound.conf
       fi
       if [ "$DISTRO" == "fedora" ]; then
         dnf install unbound unbound-host resolvconf -y
-        sed -i "s|# interface: 0.0.0.0$|interface: 10.8.0.1|" /etc/unbound/unbound.conf
-        sed -i "s|# access-control: 127.0.0.0/8 allow|access-control: 10.8.0.1/24 allow|" /etc/unbound/unbound.conf
-        sed -i "s|# interface: ::0$|interface: 127.0.0.1|" /etc/unbound/unbound.conf
-        sed -i "s|# hide-identity: no|hide-identity: yes|" /etc/unbound/unbound.conf
-        sed -i "s|# hide-version: no|hide-version: yes|" /etc/unbound/unbound.conf
-        sed -i "s|use-caps-for-id: no|use-caps-for-id: yes|" /etc/unbound/unbound.conf
+        # Remove Config
+        rm -f /etc/unbound/unbound.conf
+        # Set Config
+        echo "server:
+    num-threads: 4
+    verbosity: 1
+    root-hints: /etc/unbound/root.hints
+    auto-trust-anchor-file: /var/lib/unbound/root.key
+    interface: 0.0.0.0
+    interface: ::0
+    max-udp-size: 3072
+    access-control: 0.0.0.0/0                 refuse
+    access-control: ::0                       refuse
+    access-control: 10.8.0.0/24               allow
+    access-control: 127.0.0.1                 allow
+    private-address: 10.8.0.0/24
+    hide-identity: yes
+    hide-version: yes
+    harden-glue: yes
+    harden-dnssec-stripped: yes
+    harden-referral-path: yes
+    unwanted-reply-threshold: 10000000
+    val-log-level: 1
+    cache-min-ttl: 1800
+    cache-max-ttl: 14400
+    prefetch: yes
+    qname-minimisation: yes
+    prefetch-key: yes" >>/etc/unbound/unbound.conf
       fi
       if [ "$DISTRO" == "arch" ]; then
         pacman -Syu --noconfirm unbound resolvconf
+        # Remove Config
         rm -f /etc/unbound/unbound.conf
+        # Set Config
         echo "server:
-    use-syslog: yes
-    do-daemonize: no
-    username: unbound
-    directory: /etc/unbound
-    trust-anchor-file: trusted-key.key
-    root-hints: root.hints
-    interface: 10.8.0.0
-    access-control: 10.8.0.0 allow
-    access-control: 127.0.0.1 allow
-    port: 53
-    num-threads: 2
-    use-caps-for-id: yes
-    harden-glue: yes
+    num-threads: 4
+    verbosity: 1
+    root-hints: /etc/unbound/root.hints
+    auto-trust-anchor-file: /var/lib/unbound/root.key
+    interface: 0.0.0.0
+    interface: ::0
+    max-udp-size: 3072
+    access-control: 0.0.0.0/0                 refuse
+    access-control: ::0                       refuse
+    access-control: 10.8.0.0/24               allow
+    access-control: 127.0.0.1                 allow
+    private-address: 10.8.0.0/24
     hide-identity: yes
     hide-version: yes
+    harden-glue: yes
+    harden-dnssec-stripped: yes
+    harden-referral-path: yes
+    unwanted-reply-threshold: 10000000
+    val-log-level: 1
+    cache-min-ttl: 1800
+    cache-max-ttl: 14400
+    prefetch: yes
     qname-minimisation: yes
-    prefetch: yes" >>/etc/unbound/unbound.conf
+    prefetch-key: yes" >>/etc/unbound/unbound.conf
       fi
       # Set DNS Root Servers
       curl https://www.internic.net/domain/named.cache --create-dirs -o /etc/unbound/root.hints
