@@ -499,34 +499,6 @@ if [ ! -f "$WG_CONFIG" ]; then
       if [ "$DISTRO" == "ubuntu" ]; then
         # Install Unbound
         apt-get install unbound unbound-host e2fsprogs resolvconf -y
-        # Remove Config
-        rm -f /etc/unbound/unbound.conf
-        # Set Config
-        echo "server:
-    num-threads: 4
-    verbosity: 1
-    root-hints: /etc/unbound/root.hints
-    auto-trust-anchor-file: /var/lib/unbound/root.key
-    interface: 0.0.0.0
-    interface: ::0
-    max-udp-size: 3072
-    access-control: 0.0.0.0/0                 refuse
-    access-control: ::0                       refuse
-    access-control: 10.8.0.0/24               allow
-    access-control: 127.0.0.1                 allow
-    private-address: 10.8.0.0/24
-    hide-identity: yes
-    hide-version: yes
-    harden-glue: yes
-    harden-dnssec-stripped: yes
-    harden-referral-path: yes
-    unwanted-reply-threshold: 10000000
-    val-log-level: 1
-    cache-min-ttl: 1800
-    cache-max-ttl: 14400
-    prefetch: yes
-    qname-minimisation: yes
-    prefetch-key: yes" >>/etc/unbound/unbound.conf
         if pgrep systemd-journal; then
           systemctl stop systemd-resolved
           systemctl disable systemd-resolved
@@ -538,197 +510,30 @@ if [ ! -f "$WG_CONFIG" ]; then
       if [ "$DISTRO" == "debian" ]; then
         # Install Unbound
         apt-get install unbound unbound-host e2fsprogs resolvconf -y
-        # Remove Config
-        rm -f /etc/unbound/unbound.conf
-        # Set Config
-        echo "server:
-    num-threads: 4
-    verbosity: 1
-    root-hints: /etc/unbound/root.hints
-    auto-trust-anchor-file: /var/lib/unbound/root.key
-    interface: 0.0.0.0
-    interface: ::0
-    max-udp-size: 3072
-    access-control: 0.0.0.0/0                 refuse
-    access-control: ::0                       refuse
-    access-control: 10.8.0.0/24               allow
-    access-control: 127.0.0.1                 allow
-    private-address: 10.8.0.0/24
-    hide-identity: yes
-    hide-version: yes
-    harden-glue: yes
-    harden-dnssec-stripped: yes
-    harden-referral-path: yes
-    unwanted-reply-threshold: 10000000
-    val-log-level: 1
-    cache-min-ttl: 1800
-    cache-max-ttl: 14400
-    prefetch: yes
-    qname-minimisation: yes
-    prefetch-key: yes" >>/etc/unbound/unbound.conf
       fi
       if [ "$DISTRO" == "raspbian" ]; then
         # Install Unbound
         apt-get install unbound unbound-host e2fsprogs resolvconf -y
-        # Remove Config
-        rm -f /etc/unbound/unbound.conf
-        # Set Config
-        echo "server:
-    num-threads: 4
-    verbosity: 1
-    root-hints: /etc/unbound/root.hints
-    auto-trust-anchor-file: /var/lib/unbound/root.key
-    interface: 0.0.0.0
-    interface: ::0
-    max-udp-size: 3072
-    access-control: 0.0.0.0/0                 refuse
-    access-control: ::0                       refuse
-    access-control: 10.8.0.0/24               allow
-    access-control: 127.0.0.1                 allow
-    private-address: 10.8.0.0/24
-    hide-identity: yes
-    hide-version: yes
-    harden-glue: yes
-    harden-dnssec-stripped: yes
-    harden-referral-path: yes
-    unwanted-reply-threshold: 10000000
-    val-log-level: 1
-    cache-min-ttl: 1800
-    cache-max-ttl: 14400
-    prefetch: yes
-    qname-minimisation: yes
-    prefetch-key: yes" >>/etc/unbound/unbound.conf
       fi
       if [ "$DISTRO" == "centos" ] && [ "$DISTRO_VERSION" == "8" ]; then
         yum install unbound unbound-libs -y
-        # Remove Config
-        rm -f /etc/unbound/unbound.conf
-        # Set Config
-        echo "server:
-    num-threads: 4
-    verbosity: 1
-    root-hints: /etc/unbound/root.hints
-    auto-trust-anchor-file: /var/lib/unbound/root.key
-    interface: 0.0.0.0
-    interface: ::0
-    max-udp-size: 3072
-    access-control: 0.0.0.0/0                 refuse
-    access-control: ::0                       refuse
-    access-control: 10.8.0.0/24               allow
-    access-control: 127.0.0.1                 allow
-    private-address: 10.8.0.0/24
-    hide-identity: yes
-    hide-version: yes
-    harden-glue: yes
-    harden-dnssec-stripped: yes
-    harden-referral-path: yes
-    unwanted-reply-threshold: 10000000
-    val-log-level: 1
-    cache-min-ttl: 1800
-    cache-max-ttl: 14400
-    prefetch: yes
-    qname-minimisation: yes
-    prefetch-key: yes" >>/etc/unbound/unbound.conf
       fi
       if [ "$DISTRO" == "centos" ] && [ "$DISTRO_VERSION" == "7" ]; then
         yum install unbound unbound-libs resolvconf -y
-        # Remove Config
-        rm -f /etc/unbound/unbound.conf
-        # Set Config
-        echo "server:
-    num-threads: 4
-    verbosity: 1
-    root-hints: /etc/unbound/root.hints
-    auto-trust-anchor-file: /var/lib/unbound/root.key
-    interface: 0.0.0.0
-    interface: ::0
-    max-udp-size: 3072
-    access-control: 0.0.0.0/0                 refuse
-    access-control: ::0                       refuse
-    access-control: 10.8.0.0/24               allow
-    access-control: 127.0.0.1                 allow
-    private-address: 10.8.0.0/24
-    hide-identity: yes
-    hide-version: yes
-    harden-glue: yes
-    harden-dnssec-stripped: yes
-    harden-referral-path: yes
-    unwanted-reply-threshold: 10000000
-    val-log-level: 1
-    cache-min-ttl: 1800
-    cache-max-ttl: 14400
-    prefetch: yes
-    qname-minimisation: yes
-    prefetch-key: yes" >>/etc/unbound/unbound.conf
       fi
       if [ "$DISTRO" == "rhel" ]; then
         yum install unbound unbound-libs resolvconf -y
-        # Remove Config
-        rm -f /etc/unbound/unbound.conf
-        # Set Config
-        echo "server:
-    num-threads: 4
-    verbosity: 1
-    root-hints: /etc/unbound/root.hints
-    auto-trust-anchor-file: /var/lib/unbound/root.key
-    interface: 0.0.0.0
-    interface: ::0
-    max-udp-size: 3072
-    access-control: 0.0.0.0/0                 refuse
-    access-control: ::0                       refuse
-    access-control: 10.8.0.0/24               allow
-    access-control: 127.0.0.1                 allow
-    private-address: 10.8.0.0/24
-    hide-identity: yes
-    hide-version: yes
-    harden-glue: yes
-    harden-dnssec-stripped: yes
-    harden-referral-path: yes
-    unwanted-reply-threshold: 10000000
-    val-log-level: 1
-    cache-min-ttl: 1800
-    cache-max-ttl: 14400
-    prefetch: yes
-    qname-minimisation: yes
-    prefetch-key: yes" >>/etc/unbound/unbound.conf
       fi
       if [ "$DISTRO" == "fedora" ]; then
         dnf install unbound unbound-host resolvconf -y
-        # Remove Config
-        rm -f /etc/unbound/unbound.conf
-        # Set Config
-        echo "server:
-    num-threads: 4
-    verbosity: 1
-    root-hints: /etc/unbound/root.hints
-    auto-trust-anchor-file: /var/lib/unbound/root.key
-    interface: 0.0.0.0
-    interface: ::0
-    max-udp-size: 3072
-    access-control: 0.0.0.0/0                 refuse
-    access-control: ::0                       refuse
-    access-control: 10.8.0.0/24               allow
-    access-control: 127.0.0.1                 allow
-    private-address: 10.8.0.0/24
-    hide-identity: yes
-    hide-version: yes
-    harden-glue: yes
-    harden-dnssec-stripped: yes
-    harden-referral-path: yes
-    unwanted-reply-threshold: 10000000
-    val-log-level: 1
-    cache-min-ttl: 1800
-    cache-max-ttl: 14400
-    prefetch: yes
-    qname-minimisation: yes
-    prefetch-key: yes" >>/etc/unbound/unbound.conf
       fi
       if [ "$DISTRO" == "arch" ]; then
         pacman -Syu --noconfirm unbound resolvconf
-        # Remove Config
-        rm -f /etc/unbound/unbound.conf
-        # Set Config
-        echo "server:
+      fi
+      # Remove Config
+      rm -f /etc/unbound/unbound.conf
+      # Set Config
+      echo "server:
     num-threads: 4
     verbosity: 1
     root-hints: /etc/unbound/root.hints
@@ -753,7 +558,6 @@ if [ ! -f "$WG_CONFIG" ]; then
     prefetch: yes
     qname-minimisation: yes
     prefetch-key: yes" >>/etc/unbound/unbound.conf
-      fi
       # Set DNS Root Servers
       curl https://www.internic.net/domain/named.cache --create-dirs -o /etc/unbound/root.hints
       # Setting Client DNS For Unbound On WireGuard
