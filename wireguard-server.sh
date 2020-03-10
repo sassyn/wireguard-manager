@@ -63,6 +63,11 @@ function check-apps() {
     echo "Error: shuf is not installed, please install shuf." >&2
     exit
   fi
+  # System requirements (iptables)
+  if ! [ -x "$(command -v iptables)" ]; then
+    echo "Error: iptables is not installed, please install iptables." >&2
+    exit
+  fi
 }
 
 # Run the function and check for apps
