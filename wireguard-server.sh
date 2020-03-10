@@ -795,7 +795,7 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
         elif [ "$DISTRO" == "fedora" ]; then
           dnf remove wireguard qrencode haveged unbound unbound-host -y
           rm -f /etc/yum.repos.d/wireguard.repo
-        elif [ "$DISTRO" == "redhat" ]; then
+        elif [ "$DISTRO" == "rhel" ]; then
           yum remove wireguard qrencode haveged unbound unbound-host -y
           rm -f /etc/yum.repos.d/wireguard.repo
         fi
