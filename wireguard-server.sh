@@ -256,7 +256,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       SERVER_HOST="[$SERVER_HOST_V6]"
       ;;
     3)
-      read -rp "Custom Domain: " -e -i "example.com" SERVER_HOST
+      read -rp "Custom Domain: " -e -i "$HOSTNAME" SERVER_HOST
       ;;
     esac
   }
