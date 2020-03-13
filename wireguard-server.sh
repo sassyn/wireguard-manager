@@ -600,11 +600,9 @@ if [ ! -f "$WG_CONFIG" ]; then
         fi
       fi
       if [ "$DISTRO" == "debian" ]; then
-        # Install Unbound
         apt-get install unbound unbound-host e2fsprogs resolvconf -y
       fi
       if [ "$DISTRO" == "raspbian" ]; then
-        # Install Unbound
         apt-get install unbound unbound-host e2fsprogs resolvconf -y
       fi
       if [ "$DISTRO" == "centos" ] && [ "$DISTRO_VERSION" == "8" ]; then
