@@ -1,26 +1,25 @@
 #!/bin/bash
-# Secure WireGuard For CentOS, Debian, Ubuntu, Arch, Fedora, Redhat, Raspbian
 # https://github.com/complexorganizations/wireguard-manager
 
-# Function to check for root.
-function root-check() {
+# Require script to be run as root (or with sudo)
+function super-user-check() {
   if [ "$EUID" -ne 0 ]; then
-    echo "You need to run this script as root."
+    echo "You need to run this script as super user."
     exit
   fi
 }
 
 # Check for root
-root-check
+super-user-check
 
 # Checking For Virtualization
 function virt-check() {
-  # Deny OpenVZ
+  # Deny OpenVZ Virtualization
   if [ "$(systemd-detect-virt)" == "openvz" ]; then
     echo "OpenVZ virtualization is not supported (yet)."
     exit
   fi
-  # Deny LXC
+  # Deny LXC Virtualization
   if [ "$(systemd-detect-virt)" == "lxc" ]; then
     echo "LXC virtualization is not supported (yet)."
     exit
@@ -32,11 +31,10 @@ virt-check
 
 # Detect Operating System
 function dist-check() {
-  DIST_CHECK="/etc/os-release"
   # shellcheck disable=SC1090
-  if [ -e $DIST_CHECK ]; then
+  if [ -e /etc/os-release ]; then
     # shellcheck disable=SC1091
-    source $DIST_CHECK
+    source /etc/os-release
     DISTRO=$ID
     # shellcheck disable=SC2034
     DISTRO_VERSION=$VERSION_ID
@@ -47,20 +45,10 @@ function dist-check() {
 dist-check
 
 # Pre-Checks
-function check-apps() {
-  # System requirements (curl)
-  if ! [ -x "$(command -v curl)" ]; then
-    echo "Error: curl is not installed, please install curl." >&2
-    exit
-  fi
+function check-system-requirements() {
   # System requirements (ping)
   if ! [ -x "$(command -v ping)" ]; then
     echo "Error: ping is not installed, please install ping." >&2
-    exit
-  fi
-  # System requirements (shuf)
-  if ! [ -x "$(command -v shuf)" ]; then
-    echo "Error: shuf is not installed, please install shuf." >&2
     exit
   fi
   # System requirements (iptables)
@@ -68,18 +56,33 @@ function check-apps() {
     echo "Error: iptables is not installed, please install iptables." >&2
     exit
   fi
+  # System requirements (curl)
+  if ! [ -x "$(command -v curl)" ]; then
+    echo "Error: curl is not installed, please install curl." >&2
+    exit
+  fi
+  # System requirements (ip)
+  if ! [ -x "$(command -v ip)" ]; then
+    echo "Error: ip is not installed, please install ip." >&2
+    exit
+  fi
+  # System requirements (shuf)
+  if ! [ -x "$(command -v shuf)" ]; then
+    echo "Error: shuf is not installed, please install shuf." >&2
+    exit
+  fi
 }
 
-# Run the function and check for apps
-check-apps
-
+# Run the function and check for requirements
+check-system-requirements
 # Skips all questions and just get a client conf after install.
 function headless-install() {
   if [ "$HEADLESS_INSTALL" == "y" ]; then
-    # Set default choices so that no questions will be asked.
-    SERVER_HOST_V4=${SERVER_HOST_V4:-y}
-    SERVER_HOST_V6=${SERVER_HOST_V6:-y}
-    SERVER_PUB_NIC=${SERVER_PUB_NIC:-y}
+    IPV4_SUBNET_SETTINGS=${IPV4_SUBNET_SETTINGS:-1}
+    IPV6_SUBNET_SETTINGS=${IPV6_SUBNET_SETTINGS:-1}
+    SERVER_HOST_V4_SETTINGS=${SERVER_HOST_V4_SETTINGS:-1}
+    SERVER_HOST_V6_SETTINGS=${SERVER_HOST_V6_SETTINGS:-1}
+    SERVER_PUB_NIC_SETTINGS=${SERVER_PUB_NIC_SETTINGS:-1}
     SERVER_PORT_SETTINGS=${SERVER_PORT_SETTINGS:-1}
     NAT_CHOICE_SETTINGS=${NAT_CHOICE_SETTINGS:-1}
     MTU_CHOICE_SETTINGS=${MTU_CHOICE_SETTINGS:-1}
@@ -99,94 +102,144 @@ WIREGUARD_PUB_NIC="wg0"
 # Location For WG_CONFIG
 WG_CONFIG="/etc/wireguard/$WIREGUARD_PUB_NIC.conf"
 if [ ! -f "$WG_CONFIG" ]; then
+
+  # Custom subnet
+  function set-ipv4-subnet() {
+    echo "What ipv4 subnet do you want to use?"
+    echo "  1) 10.8.0.0/24 (Recommended)"
+    echo "  2) 10.0.0.0/24"
+    echo "  3) Custom (Advanced)"
+    until [[ "$IPV4_SUBNET_SETTINGS" =~ ^[1-3]$ ]]; do
+      read -rp "Subnetwork choice [1-3]: " -e -i 1 IPV4_SUBNET_SETTINGS
+    done
+    # Apply port response
+    case $IPV4_SUBNET_SETTINGS in
+    1)
+      IPV4_SUBNET="10.8.0.0/24"
+      ;;
+    2)
+      IPV4_SUBNET="10.0.0.0/24"
+      ;;
+    3)
+      read -rp "Custom Subnet: " -e -i "10.8.0.0/24" IPV4_SUBNET
+      ;;
+    esac
+  }
+
+  # Custom Subnet
+  set-ipv4-subnet
+
+  # Custom subnet
+  function set-ipv6-subnet() {
+    echo "What ipv6 subnet do you want to use?"
+    echo "  1) fd42:42:42::0/64 (Recommended)"
+    echo "  2) fd86:ea04:1115::0/64"
+    echo "  3) Custom (Advanced)"
+    until [[ "$IPV6_SUBNET_SETTINGS" =~ ^[1-3]$ ]]; do
+      read -rp "Subnetwork choice [1-3]: " -e -i 1 IPV6_SUBNET_SETTINGS
+    done
+    # Apply port response
+    case $IPV6_SUBNET_SETTINGS in
+    1)
+      IPV6_SUBNET="fd42:42:42::0/64"
+      ;;
+    2)
+      IPV6_SUBNET="fd86:ea04:1115::0/64"
+      ;;
+    3)
+      read -rp "Custom Subnet: " -e -i "fd42:42:42::0/64" IPV6_SUBNET
+      ;;
+    esac
+  }
+
+  # Custom Subnet
+  set-ipv6-subnet
+
   # Private Subnet Ipv4
-  PRIVATE_SUBNET_V4=${PRIVATE_SUBNET_V4:-"10.8.0.0/24"}
+  PRIVATE_SUBNET_V4=${PRIVATE_SUBNET_V4:-"$IPV4_SUBNET"}
   # Private Subnet Mask IPv4
   PRIVATE_SUBNET_MASK_V4=$(echo "$PRIVATE_SUBNET_V4" | cut -d "/" -f 2)
   # IPv4 Getaway
   GATEWAY_ADDRESS_V4="${PRIVATE_SUBNET_V4::-4}1"
   # Private Subnet Ipv6
-  PRIVATE_SUBNET_V6=${PRIVATE_SUBNET_V6:-"fd42:42:42::0/64"}
+  PRIVATE_SUBNET_V6=${PRIVATE_SUBNET_V6:-"$IPV6_SUBNET"}
   # Private Subnet Mask IPv6
   PRIVATE_SUBNET_MASK_V6=$(echo "$PRIVATE_SUBNET_V6" | cut -d "/" -f 2)
   # IPv6 Getaway
   GATEWAY_ADDRESS_V6="${PRIVATE_SUBNET_V6::-4}1"
 
-  # Detect IPV4
-  function detect-ipv4() {
-    if type ping >/dev/null 2>&1; then
-      PING="ping -c3 ipv4.google.com > /dev/null 2>&1"
-    else
-      PING6="ping -4 -c3 ipv4.google.com > /dev/null 2>&1"
-    fi
-    if eval "$PING"; then
-      IPV4_SUGGESTION="y"
-    else
-      IPV4_SUGGESTION="n"
-    fi
-  }
-
-  # Detect IPV4
-  detect-ipv4
-
-  # Test outward facing IPV4
+  # Determine host port
   function test-connectivity-v4() {
-    if [ "$SERVER_HOST_V4" == "" ]; then
+    echo "How would you like to detect IPV4?"
+    echo "  1) Curl (Recommended)"
+    echo "  2) IP (Advanced)"
+    echo "  3) Custom (Advanced)"
+    until [[ "$SERVER_HOST_V4_SETTINGS" =~ ^[1-3]$ ]]; do
+      read -rp "ipv4 choice [1-3]: " -e -i 1 SERVER_HOST_V4_SETTINGS
+    done
+    # Apply port response
+    case $SERVER_HOST_V4_SETTINGS in
+    1)
       SERVER_HOST_V4="$(curl --silent ipv4.icanhazip.com)"
-      read -rp "System public IPV4 address is $SERVER_HOST_V4 Is that correct? [y/n]: " -e -i "$IPV4_SUGGESTION" SERVER_HOST_V4
-      if [ "$SERVER_HOST_V4" == "n" ]; then
-        echo "Aborted. Use environment variable SERVER_HOST_V4 to set the correct public IP address."
-      fi
-    fi
+      ;;
+    2)
+      SERVER_HOST_V4=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
+      ;;
+    3)
+      read -rp "Custom IPV4: " -e -i "$(hostname)" SERVER_HOST_V4
+      ;;
+    esac
   }
 
-  # Test IPV4 Connectivity
+  # Set Port
   test-connectivity-v4
 
-  # Detect IPV6
-  function detect-ipv6() {
-    if type ping >/dev/null 2>&1; then
-      PING6="ping6 -c3 ipv6.google.com > /dev/null 2>&1"
-    else
-      PING6="ping -6 -c3 ipv6.google.com > /dev/null 2>&1"
-    fi
-    if eval "$PING6"; then
-      IPV6_SUGGESTION="y"
-    else
-      IPV6_SUGGESTION="n"
-    fi
-  }
-
-  # Test IPV6 Connectivity
-  detect-ipv6
-
-  # Test outward facing IPV6
+  # Determine ipv6
   function test-connectivity-v6() {
-    if [ "$SERVER_HOST_V6" == "" ]; then
+    echo "How would you like to detect IPV6?"
+    echo "  1) Curl (Recommended)"
+    echo "  2) IP (Advanced)"
+    echo "  3) Custom (Advanced)"
+    until [[ "$SERVER_HOST_V6_SETTINGS" =~ ^[1-3]$ ]]; do
+      read -rp "ipv6 choice [1-3]: " -e -i 1 SERVER_HOST_V6_SETTINGS
+    done
+    # Apply port response
+    case $SERVER_HOST_V6_SETTINGS in
+    1)
       SERVER_HOST_V6="$(curl --silent ipv6.icanhazip.com)"
-      read -rp "System public IPV6 address is $SERVER_HOST_V6 Is that correct? [y/n]: " -e -i "$IPV6_SUGGESTION" SERVER_HOST_V6
-      if [ "$SERVER_HOST_V6" == "n" ]; then
-        echo "Aborted. Use environment variable SERVER_HOST_V6 to set the correct public IP address."
-      fi
-    fi
+      ;;
+    2)
+      SERVER_HOST_V6=$(ip r get to 2001:4860:4860::8888 | perl -ne '/src ([\w:]+)/ && print "$1\n"')
+      ;;
+    3)
+      read -rp "Custom IPV6: " -e -i "$(hostname)" SERVER_HOST_V6
+      ;;
+    esac
   }
 
-  # Test IPV6 Connectivity
+  # Set Port
   test-connectivity-v6
 
-  # Detect public interface and pre-fill for the user
+  # Determine ipv6
   function server-pub-nic() {
-    if [ "$SERVER_PUB_NIC" == "" ]; then
+    echo "How would you like to detect IPV6?"
+    echo "  1) IP (Recommended)"
+    echo "  2) Custom (Advanced)"
+    until [[ "$SERVER_PUB_NIC_SETTINGS" =~ ^[1-2]$ ]]; do
+      read -rp "nic choice [1-2]: " -e -i 1 SERVER_PUB_NIC_SETTINGS
+    done
+    # Apply port response
+    case $SERVER_PUB_NIC_SETTINGS in
+    1)
       SERVER_PUB_NIC="$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)"
-      read -rp "System public nic address is $SERVER_PUB_NIC Is that correct? [y/n]: " -e -i y SERVER_PUB_NIC
-    fi
-    if [ "$SERVER_PUB_NIC" == "n" ]; then
-      echo "Aborted. Use environment variable SERVER_PUB_NIC to set the correct public nic address."
-      exit
-    fi
+      ;;
+    2)
+      read -rp "Custom NAT: " -e -i "$(netstat -i)" SERVER_PUB_NIC
+      ;;
+    esac
   }
 
-  # Run The Function
+  # Set Port
   server-pub-nic
 
   # Determine host port
@@ -571,20 +624,22 @@ if [ ! -f "$WG_CONFIG" ]; then
       fi
       # Remove Config
       rm -f /etc/unbound/unbound.conf
-      # Set Config
+      # Set Config for unbound
       echo "server:
     num-threads: 4
     verbosity: 1
     root-hints: /etc/unbound/root.hints
-    auto-trust-anchor-file: /var/lib/unbound/root.key
+    # auto-trust-anchor-file: /etc/unbound/root.key
     interface: 0.0.0.0
     interface: ::0
     max-udp-size: 3072
     access-control: 0.0.0.0/0                 refuse
     access-control: ::0                       refuse
-    access-control: 10.8.0.0/24               allow
+    access-control: $PRIVATE_SUBNET_V4               allow
+    access-control: $PRIVATE_SUBNET_V6          allow
     access-control: 127.0.0.1                 allow
-    private-address: 10.8.0.0/24
+    private-address: $PRIVATE_SUBNET_V4
+    private-address: $PRIVATE_SUBNET_V6
     hide-identity: yes
     hide-version: yes
     harden-glue: yes
@@ -600,7 +655,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       # Set DNS Root Servers
       curl https://www.internic.net/domain/named.cache --create-dirs -o /etc/unbound/root.hints
       # Setting Client DNS For Unbound On WireGuard
-      CLIENT_DNS="10.8.0.1"
+      CLIENT_DNS="$GATEWAY_ADDRESS_V4,$GATEWAY_ADDRESS_V6"
       # Allow the modification of the file
       chattr -i /etc/resolv.conf
       # Disable previous DNS servers
@@ -642,10 +697,10 @@ if [ ! -f "$WG_CONFIG" ]; then
 Address = $GATEWAY_ADDRESS_V4/$PRIVATE_SUBNET_MASK_V4,$GATEWAY_ADDRESS_V6/$PRIVATE_SUBNET_MASK_V6
 ListenPort = $SERVER_PORT
 PrivateKey = $SERVER_PRIVKEY
-PostUp = iptables -A FORWARD -i $WIREGUARD_PUB_NIC -j ACCEPT; iptables -t nat -A POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; ip6tables -A FORWARD -i $WIREGUARD_PUB_NIC -j ACCEPT; ip6tables -t nat -A POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; iptables -A INPUT -s $PRIVATE_SUBNET_V4 -p udp -m udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
-PostDown = iptables -D FORWARD -i $WIREGUARD_PUB_NIC -j ACCEPT; iptables -t nat -D POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; ip6tables -D FORWARD -i $WIREGUARD_PUB_NIC -j ACCEPT; ip6tables -t nat -D POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; iptables -D INPUT -s $PRIVATE_SUBNET_V4 -p udp -m udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
+PostUp = iptables -A FORWARD -i $WIREGUARD_PUB_NIC -j ACCEPT; iptables -t nat -A POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; ip6tables -A FORWARD -i $WIREGUARD_PUB_NIC -j ACCEPT; ip6tables -t nat -A POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; iptables -A INPUT -s $PRIVATE_SUBNET_V4 -p udp -m udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT; ip6tables -A INPUT -s $PRIVATE_SUBNET_V6 -p udp -m udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
+PostDown = iptables -D FORWARD -i $WIREGUARD_PUB_NIC -j ACCEPT; iptables -t nat -D POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; ip6tables -D FORWARD -i $WIREGUARD_PUB_NIC -j ACCEPT; ip6tables -t nat -D POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; iptables -D INPUT -s $PRIVATE_SUBNET_V4 -p udp -m udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT; iptables -D INPUT -s $PRIVATE_SUBNET_V6 -p udp -m udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
 SaveConfig = false
-  # $CLIENT_NAME start
+# $CLIENT_NAME start
 [Peer]
 PublicKey = $CLIENT_PUBKEY
 PresharedKey = $PRESHARED_KEY
@@ -822,13 +877,15 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
           yum remove wireguard qrencode haveged unbound unbound-host -y
         elif [ "$DISTRO" == "debian" ]; then
           apt-get remove --purge wireguard qrencode haveged unbound unbound-host -y
-          sed -i "s|deb http://deb.debian.org/debian/ unstable main||" /etc/apt/sources.list.d/unstable.list
+          rm -f /etc/apt/sources.list.d/unstable.list
+          rm -f /etc/apt/preferences.d/limit-unstable
         elif [ "$DISTRO" == "ubuntu" ]; then
           apt-get remove --purge wireguard qrencode haveged unbound unbound-host -y
         elif [ "$DISTRO" == "raspbian" ]; then
           apt-key del 04EE7237B7D453EC
           apt-get remove --purge wireguard qrencode haveged unbound unbound-host dirmngr -y
-          sed -i "s|deb http://deb.debian.org/debian/ unstable main||" /etc/apt/sources.list.d/unstable.list
+          rm -f /etc/apt/sources.list.d/unstable.list
+          rm -f /etc/apt/preferences.d/limit-unstable
         elif [ "$DISTRO" == "arch" ]; then
           pacman -Rs wireguard qrencode haveged unbound unbound-host -y
         elif [ "$DISTRO" == "fedora" ]; then

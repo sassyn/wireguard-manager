@@ -36,7 +36,7 @@ chmod +x /etc/wireguard/wireguard-server.sh
 ```
 Its finally time to execute the script
 ```
-bash /etc/wireguard/wireguard-server.sh
+./etc/wireguard/wireguard-server.sh
 ```
 In your `/etc/wireguard/clients` directory, you will have `.conf` files. These are the client configuration files. Download them from your WireGuard Interface and connect using your favorite WireGuard Peer.
 
