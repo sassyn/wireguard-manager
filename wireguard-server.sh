@@ -622,16 +622,12 @@ if [ ! -f "$WG_CONFIG" ]; then
       fi
       # Remove Unbound Config
       rm -f /etc/unbound/unbound.conf
-      # Remove Anchor File
-      rm -f /var/lib/unbound/root.key
-      # Get new file
-      unbound-anchor
       # Set Config for unbound
       echo "server:
     num-threads: 4
     verbosity: 1
     root-hints: /etc/unbound/root.hints
-    auto-trust-anchor-file: /var/lib/unbound/root.key
+    # auto-trust-anchor-file: /var/lib/unbound/root.key
     interface: 0.0.0.0
     interface: ::0
     max-udp-size: 3072
