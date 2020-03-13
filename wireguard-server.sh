@@ -615,7 +615,7 @@ if [ ! -f "$WG_CONFIG" ]; then
         yum install unbound unbound-libs -y
       fi
       if [ "$DISTRO" == "fedora" ]; then
-        dnf install unbound unbound-host resolvconf -y
+        dnf install unbound -y
       fi
       if [ "$DISTRO" == "arch" ]; then
         pacman -Syu --noconfirm unbound resolvconf
@@ -891,7 +891,7 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
         elif [ "$DISTRO" == "arch" ]; then
           pacman -Rs wireguard qrencode haveged unbound unbound-host -y
         elif [ "$DISTRO" == "fedora" ]; then
-          dnf remove wireguard qrencode haveged unbound unbound-host -y
+          dnf remove wireguard qrencode haveged unbound -y
           rm -f /etc/yum.repos.d/wireguard.repo
         elif [ "$DISTRO" == "rhel" ]; then
           yum remove wireguard qrencode haveged unbound unbound-host -y
