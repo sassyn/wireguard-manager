@@ -16,15 +16,15 @@ root-check
 # Checking For Virtualization
 function virt-check() {
   # Deny OpenVZ
-    if [ "$(systemd-detect-virt)" == "openvz" ]; then
-      echo "OpenVZ virtualization is not supported (yet)."
-      exit
-    fi
-    # Deny LXC
-    if [ "$(systemd-detect-virt)" == "lxc" ]; then
-      echo "LXC virtualization is not supported (yet)."
-      exit
-    fi
+  if [ "$(systemd-detect-virt)" == "openvz" ]; then
+    echo "OpenVZ virtualization is not supported (yet)."
+    exit
+  fi
+  # Deny LXC
+  if [ "$(systemd-detect-virt)" == "lxc" ]; then
+    echo "LXC virtualization is not supported (yet)."
+    exit
+  fi
 }
 
 # Virtualization Check
@@ -32,11 +32,10 @@ virt-check
 
 # Detect Operating System
 function dist-check() {
-  DIST_CHECK="/etc/os-release"
   # shellcheck disable=SC1090
-  if [ -e $DIST_CHECK ]; then
+  if [ -e /etc/os-release ]; then
     # shellcheck disable=SC1091
-    source $DIST_CHECK
+    source /etc/os-release
     DISTRO=$ID
     # shellcheck disable=SC2034
     DISTRO_VERSION=$VERSION_ID

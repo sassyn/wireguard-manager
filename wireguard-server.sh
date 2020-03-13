@@ -75,6 +75,7 @@ function check-system-requirements() {
 
 # Run the function and check for requirements
 check-system-requirements
+
 # Skips all questions and just get a client conf after install.
 function headless-install() {
   if [ "$HEADLESS_INSTALL" == "y" ]; then
