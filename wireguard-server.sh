@@ -79,16 +79,16 @@ check-system-requirements
 function usage-guide() {
     # shellcheck disable=SC2027,SC2046
     echo "usage: ./"$(basename "$0")" [options]"
-    echo "  --install     Install WireGuard Interface"
-    echo "  --start     Start WireGuard Interface"
-    echo "  --stop     Stop WireGuard Interface"
+    echo "  --install     Install WireGuard Interfacee"
+    echo "  --start       Start WireGuard Interface"
+    echo "  --stop        Stop WireGuard Interface"
     echo "  --restart     Restart WireGuard Interface"
-    echo "  --list     Show WireGuard Peers"
-    echo "  --add     Add WireGuard Peer"
-    echo "  --remove     Remove WireGuard Peer"
-    echo "  --uninstall     Uninstall WireGuard Interface"
-    echo "  --update     Update WireGuard Script"
-    echo "  --help     Show Usage Guide"
+    echo "  --list        Show WireGuard Peers"
+    echo "  --add         Add WireGuard Peer"
+    echo "  --remove      Remove WireGuard Peer"
+    echo "  --uninstall   Uninstall WireGuard Interface"
+    echo "  --update      Update WireGuard Script"
+    echo "  --help        Show Usage Guide"
     exit
 }
 
