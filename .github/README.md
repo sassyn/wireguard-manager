@@ -36,7 +36,7 @@ chmod +x /etc/wireguard/wireguard-server.sh
 ```
 Its finally time to execute the script
 ```
-./etc/wireguard/wireguard-server.sh
+bash /etc/wireguard/wireguard-server.sh
 ```
 In your `/etc/wireguard/clients` directory, you will have `.conf` files. These are the client configuration files. Download them from your WireGuard Interface and connect using your favorite WireGuard Peer.
 
@@ -50,6 +50,22 @@ In your `/etc/wireguard/clients` directory, you will have `.conf` files. These a
 - Remove WireGuard Peer
 - Uninstall WireGuard Interface
 - Update this script
+
+---
+### Usage
+```
+usage: ./wireguard-server.sh [options]
+  --install     Install WireGuard Interface
+  --start     Start WireGuard Interface
+  --stop     Stop WireGuard Interface
+  --restart     Restart WireGuard Interface
+  --list     Show WireGuard Peers
+  --add     Add WireGuard Peer
+  --remove     Remove WireGuard Peer
+  --uninstall     Uninstall WireGuard Interface
+  --update     Update WireGuard Script
+  --help     Show Usage Guide
+```
 
 ---
 ### Features
