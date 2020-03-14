@@ -258,7 +258,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       SERVER_HOST_V4=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
       ;;
     3)
-      read -rp "Custom IPV4: " -e -i "$(hostname)" SERVER_HOST_V4
+      read -rp "Custom IPV4: " -e -i "$(curl --silent ipv4.icanhazip.com)" SERVER_HOST_V4
       ;;
     esac
   }
@@ -284,7 +284,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       SERVER_HOST_V6=$(ip r get to 2001:4860:4860::8888 | perl -ne '/src ([\w:]+)/ && print "$1\n"')
       ;;
     3)
-      read -rp "Custom IPV6: " -e -i "$(hostname)" SERVER_HOST_V6
+      read -rp "Custom IPV6: " -e -i "$(curl --silent ipv6.icanhazip.com)" SERVER_HOST_V6
       ;;
     esac
   }
@@ -306,7 +306,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       SERVER_PUB_NIC="$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)"
       ;;
     2)
-      read -rp "Custom NAT: " -e -i "$(netstat -i)" SERVER_PUB_NIC
+      read -rp "Custom NAT: " -e -i "$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)" SERVER_PUB_NIC
       ;;
     esac
   }
