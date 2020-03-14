@@ -77,72 +77,72 @@ function check-system-requirements() {
 check-system-requirements
 
 function usage-guide() {
-    # shellcheck disable=SC2027,SC2046
-    echo "usage: ./"$(basename "$0")" [options]"
-    echo "  --install     Install WireGuard Interfacee"
-    echo "  --start       Start WireGuard Interface"
-    echo "  --stop        Stop WireGuard Interface"
-    echo "  --restart     Restart WireGuard Interface"
-    echo "  --list        Show WireGuard Peers"
-    echo "  --add         Add WireGuard Peer"
-    echo "  --remove      Remove WireGuard Peer"
-    echo "  --uninstall   Uninstall WireGuard Interface"
-    echo "  --update      Update WireGuard Script"
-    echo "  --help        Show Usage Guide"
-    exit
+  # shellcheck disable=SC2027,SC2046
+  echo "usage: ./"$(basename "$0")" [options]"
+  echo "  --install     Install WireGuard Interfacee"
+  echo "  --start       Start WireGuard Interface"
+  echo "  --stop        Stop WireGuard Interface"
+  echo "  --restart     Restart WireGuard Interface"
+  echo "  --list        Show WireGuard Peers"
+  echo "  --add         Add WireGuard Peer"
+  echo "  --remove      Remove WireGuard Peer"
+  echo "  --uninstall   Uninstall WireGuard Interface"
+  echo "  --update      Update WireGuard Script"
+  echo "  --help        Show Usage Guide"
+  exit
 }
 
 function usage() {
-    while [ $# -ne 0 ]; do
-        case "${1}" in
-        --install)
-            shift
-            HEADLESS_INSTALL=${HEADLESS_INSTALL:-y}
-            ;;
-        --start)
-            shift
-            WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-2}
-            ;;
-        --stop)
-            shift
-            WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-3}
-            ;;
-        --restart)
-            shift
-            WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-4}
-            ;;
-        --list)
-            shift
-            WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-1}
-            ;;
-        --add)
-            shift
-            WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-5}
-            ;;
-        --remove)
-            shift
-            WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-6}
-            ;;
-        --uninstall)
-            shift
-            WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-7}
-            ;;
-        --update)
-            shift
-            WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-8}
-            ;;
-        --help)
-            shift
-            usage-guide
-            ;;
-        *)
-            echo "Invalid argument: $1"
-            usage-guide
-            exit
-            ;;
-        esac
-        shift
-    done
+  while [ $# -ne 0 ]; do
+    case "${1}" in
+    --install)
+      shift
+      HEADLESS_INSTALL=${HEADLESS_INSTALL:-y}
+      ;;
+    --start)
+      shift
+      WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-2}
+      ;;
+    --stop)
+      shift
+      WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-3}
+      ;;
+    --restart)
+      shift
+      WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-4}
+      ;;
+    --list)
+      shift
+      WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-1}
+      ;;
+    --add)
+      shift
+      WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-5}
+      ;;
+    --remove)
+      shift
+      WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-6}
+      ;;
+    --uninstall)
+      shift
+      WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-7}
+      ;;
+    --update)
+      shift
+      WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-8}
+      ;;
+    --help)
+      shift
+      usage-guide
+      ;;
+    *)
+      echo "Invalid argument: $1"
+      usage-guide
+      exit
+      ;;
+    esac
+    shift
+  done
 }
 
 usage "$@"
