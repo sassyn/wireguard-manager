@@ -56,15 +56,15 @@ In your `/etc/wireguard/clients` directory, you will have `.conf` files. These a
 ```
 usage: ./wireguard-server.sh [options]
   --install     Install WireGuard Interface
-  --start     Start WireGuard Interface
-  --stop     Stop WireGuard Interface
+  --start       Start WireGuard Interface
+  --stop        Stop WireGuard Interface
   --restart     Restart WireGuard Interface
-  --list     Show WireGuard Peers
-  --add     Add WireGuard Peer
-  --remove     Remove WireGuard Peer
-  --uninstall     Uninstall WireGuard Interface
-  --update     Update WireGuard Script
-  --help     Show Usage Guide
+  --list        Show WireGuard Peers
+  --add         Add WireGuard Peer
+  --remove      Remove WireGuard Peer
+  --uninstall   Uninstall WireGuard Interface
+  --update      Update WireGuard Script
+  --help        Show Usage Guide
 ```
 
 ---
