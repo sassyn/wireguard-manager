@@ -78,7 +78,7 @@ check-system-requirements
 
 function usage-guide() {
   # shellcheck disable=SC2027,SC2046
-  echo "usage: ./"$(basename "$0")" [options]"
+  echo "usage: ./"$(basename "$0")" [arguments] [options]"
   echo "  --install     Install WireGuard Interfacee"
   echo "  --start       Start WireGuard Interface"
   echo "  --stop        Stop WireGuard Interface"
