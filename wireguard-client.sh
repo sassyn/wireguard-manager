@@ -45,6 +45,17 @@ function dist-check() {
 # Check Operating System
 dist-check
 
+function check-system-requirements() {
+  # System requirements (iptables)
+  if ! [ -x "$(command -v iptables)" ]; then
+    echo "Error: iptables is not installed, please install iptables." >&2
+    exit
+  fi
+}
+
+# Run the function and check for requirements
+check-system-requirements
+
 # Install WireGuard Client
 function install-wireguard-client() {
   # Installation begins here.
