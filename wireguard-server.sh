@@ -46,11 +46,6 @@ dist-check
 
 # Pre-Checks
 function check-system-requirements() {
-  # System requirements (ping)
-  if ! [ -x "$(command -v ping)" ]; then
-    echo "Error: ping is not installed, please install ping." >&2
-    exit
-  fi
   # System requirements (iptables)
   if ! [ -x "$(command -v iptables)" ]; then
     echo "Error: iptables is not installed, please install iptables." >&2
