@@ -44,6 +44,17 @@ function dist-check() {
 # Check Operating System
 dist-check
 
+# https://docs.microsoft.com/en-us/windows/wsl/install-win10
+function wsl-check() {
+    if cat /proc/version | grep Microsoft; then
+      DISTRO="windows"
+      DISTRO_VERSION="10"
+    fi
+}
+
+# windows 10 wsl check
+wsl-check
+
 # Pre-Checks
 function check-system-requirements() {
   # System requirements (ping)
@@ -563,7 +574,28 @@ if [ ! -f "$WG_CONFIG" ]; then
 
   # Install WireGuard Server
   function install-wireguard-server() {
-    # Installation begins here.
+    if [ "$DISTRO" == "windows" ] && [ "$DISTRO_VERSION" == "10" ]; then
+      rm -rf /lib/modules/4.15.0–76-generic/
+      mkdir -p /etc/wireguard
+      cd /etc/wireguard
+      mkdir -p /etc/wireguard/workspace
+      cd /etc/wireguard/workspace
+      apt-get install libelf-dev pkg-config bison build-essential flex libssl-dev libelf-dev bc git -y
+      git clone --depth 1 https://github.com/microsoft/WSL2-Linux-Kernel.git
+      git clone --depth 1 https://git.zx2c4.com/wireguard-linux-compat
+      git clone --depth 1 https://git.zx2c4.com/wireguard-tools
+      cd /etc/wireguard/workspace/WSL2-Linux-Kernel
+      zcat /proc/config.gz >.config
+      make -j $(nproc)
+      make -j $(nproc) modules_install
+      cd /lib/modules
+      ln -s 4.19.84-microsoft-standard+/ 4.19.84-microsoft-standard
+      cd /etc/wireguard/workspace
+      make -C wireguard-linux-compat/src -j$(nproc)
+      make -C wireguard-linux-compat/src install
+      make -C wireguard-tools/src -j$(nproc)
+      make -C wireguard-tools/src install
+    fi
     if [ "$DISTRO" == "ubuntu" ] && [ "$DISTRO_VERSION" == "19.10" ]; then
       apt-get update
       apt-get install linux-headers-"$(uname -r)" -y
