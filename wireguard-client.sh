@@ -137,3 +137,12 @@ function install-wireguard-client() {
 
 # WireGuard Client
 install-wireguard-client
+
+function wireguard-peer() {
+    mkdir -p /etc/wireguard
+    echo "please move the peer config to /etc/wireguard/wg0.conf"
+    echo "systemctl enable wg-quick@wg0"
+    echo "systemctl start wg-quick@wg0"
+}
+
+wireguard-peer
