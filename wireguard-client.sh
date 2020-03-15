@@ -51,6 +51,11 @@ function check-system-requirements() {
     echo "Error: iptables is not installed, please install iptables." >&2
     exit
   fi
+  # System requirements (curl)
+  if ! [ -x "$(command -v curl)" ]; then
+    echo "Error: curl is not installed, please install curl." >&2
+    exit
+  fi
 }
 
 # Run the function and check for requirements
