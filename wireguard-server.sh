@@ -422,8 +422,8 @@ if [ ! -f "$WG_CONFIG" ]; then
   function disable-ipvx() {
     echo "Do you want to disable IPv4 or IPv6 on the server?"
     echo "  1) No (Recommended)"
-    echo "  2) IPV4"
-    echo "  3) IPV6"
+    echo "  2) Disable IPV4"
+    echo "  3) Disable IPV6"
     until [[ "$DISABLE_HOST_SETTINGS" =~ ^[1-3]$ ]]; do
       read -rp "Disable Host Choice [1-3]: " -e -i 1 DISABLE_HOST_SETTINGS
     done
