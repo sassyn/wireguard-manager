@@ -7,25 +7,19 @@
     <img alt="ShellCheck" src="https://github.com/complexorganizations/wireguard-manager/workflows/ShellCheck/badge.svg" target="_blank" />
   </a>
   <a href="https://github.com/complexorganizations/wireguard-manager/issues">
-    <img alt="Issues" src="https://img.shields.io/github/issues/complexorganizations/wireguard-manager" />
-  </a>
-  <a href="https://github.com/complexorganizations/wireguard-manager/graphs/contributors">
-    <img alt="Contributors" src="https://img.shields.io/github/contributors/complexorganizations/wireguard-manager" />
-  </a>
-  <a href="https://github.com/complexorganizations/wireguard-manager/fork">
-    <img alt="Fork" src="https://img.shields.io/github/forks/complexorganizations/wireguard-manager?style=social" />
+    <img alt="Issues" src="https://img.shields.io/github/issues/complexorganizations/wireguard-manager" target="_blank" />
   </a>
   <a href="https://github.com/sponsors/Prajwal-Koirala">
-    <img alt="Sponsors" src="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub" />
+    <img alt="Sponsors" src="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub" target="_blank" />
   </a>
 </p>
 
 ---
-### What is WireGuard?
+### What is WireGuard❓
 WireGuard is a straightforward yet fast and modern VPN that utilizes state-of-the-art cryptography. It aims to be faster, simpler, leaner, and more useful than IPsec while avoiding the massive headache. It intends to be considerably more performant than OpenVPN. WireGuard is designed as a general-purpose VPN for running on embedded interfaces and super computers alike, fit for many different circumstances. Initially released for the Linux kernel, it is now cross-platform (Windows, macOS, BSD, iOS, Android) and widely deployable. It is currently under a massive development, but it already might be regarded as the most secure, most comfortable to use, and the simplest VPN solution in the industry.
 
 ---
-### WireGuard Goals
+### ⛳ WireGuard Goals
  - strong, modern security by default
  - minimal config and key management
  - fast, both low-latency and high-bandwidth
@@ -39,7 +33,7 @@ WireGuard is a straightforward yet fast and modern VPN that utilizes state-of-th
 - You will need root access or a user account with `sudo` privilege.
 
 ---
-### Installation
+### 📲 Installation
 Lets first use `curl` and save the file in `/etc/wireguard/`
 ```
 curl https://raw.githubusercontent.com/complexorganizations/wireguard-manager/master/wireguard-server.sh --create-dirs -o /etc/wireguard/wireguard-server.sh
@@ -55,7 +49,7 @@ bash /etc/wireguard/wireguard-server.sh
 In your `/etc/wireguard/clients` directory, you will have `.conf` files. These are the client configuration files. Download them from your WireGuard Interface and connect using your favorite WireGuard Peer.
 
 ---
-### After Installation
+### 💣 After Installation
 - Show WireGuard Interface
 - Start WireGuard Interface
 - Stop WireGuard Interface
@@ -66,7 +60,7 @@ In your `/etc/wireguard/clients` directory, you will have `.conf` files. These a
 - Update this script
 
 ---
-### Usage
+### 🔑 Usage
 ```
 usage: ./wireguard-server.sh <command> [options]
   --install     Install WireGuard Interface
@@ -82,7 +76,7 @@ usage: ./wireguard-server.sh <command> [options]
 ```
 
 ---
-### Features
+### 🥰 Features
 - Installs and configures a ready-to-use WireGuard Interface
 - (IPv4|IPv6) Supported, (IPv4|IPv6) Leak Protection
 - Iptables rules and forwarding managed in a seamless way
@@ -95,7 +89,7 @@ usage: ./wireguard-server.sh <command> [options]
 - Many other little things!
 
 ---
-### Options
+### 💡 Options
 * `PRIVATE_SUBNET_V4` - private IPv4 subnet configuration `10.8.0.0/24` by default
 * `PRIVATE_SUBNET_V6` - private IPv6 subnet configuration `fd42:42:42::0/64` by default
 * `SERVER_HOST_V4` - public IPv4 address, detected by default using `curl`
@@ -111,7 +105,7 @@ usage: ./wireguard-server.sh <command> [options]
 * `MTU_CHOICE` - the MTU the client will use to connect to DNS `1420`
 
 ---
-### Compatibility with Linux Distro
+### 👉👈 Compatibility with Linux Distro
 | OS              | Supported          | i386               | amd64              | armhf              | arm64              |
 | --------------  | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
 | Ubuntu 14.04 ≤  |:x:                 |:x:                 |:x:                 |:x:                 |:x:                 |
@@ -137,7 +131,7 @@ usage: ./wireguard-server.sh <command> [options]
 | LXC             |:x:                 |:x:                 |:x:                 |:x:                 |:x:                 |
 | KVM             |:white_check_mark:  |:white_check_mark:  |:white_check_mark:  |:white_check_mark:  |:white_check_mark:  |
 | OpenVZ          |:x:                 |:x:                 |:x:                 |:x:                 |:x:                 |
-### Compatibility with Cloud Providers
+### ☁️ Compatibility with Cloud Providers
 | Cloud           | Supported          |
 | --------------  | ------------------ |
 | AWS             |:white_check_mark:  |
@@ -154,7 +148,7 @@ usage: ./wireguard-server.sh <command> [options]
 | Strato          |:x:                 |
 
 ---
-### Q&A
+### 🙋 Q&A
 Which hosting provider do you recommend?
 - [Google Cloud](https://gcpsignup.page.link/H9XL): Worldwide locations, starting at $10/month
 - [Vultr](https://www.vultr.com/?ref=8211592): Worldwide locations, IPv6 support, starting at $3.50/month
@@ -181,22 +175,44 @@ Official Links
 - Whitepaper: https://www.wireguard.com/papers/wireguard.pdf
 
 ---
-### Developing
+### 🤝 Developing
 Using a browser based development environment:
 
 [![Open in Gitpod](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/complexorganizations/wireguard-manager)
 
-### Debugging
+### 🐛 Debugging
 ```
 git clone https://github.com/complexorganizations/wireguard-manager /etc/wireguard/
 bash -x /etc/wireguard/wireguard-(server|client).sh >> /etc/wireguard/wireguard-(server|client).log
 ```
 
 ---
-### Credits
+### 👤 Author
+
+* Name: Prajwal Koirala
+* Website: https://www.prajwalkoirala.com
+* Github: [@prajwal-koirala](https://github.com/prajwal-koirala)
+* LinkedIn: [@prajwal-koirala](https://www.linkedin.com/in/prajwal-koirala)
+* Twitter: [@Prajwal_K23](https://twitter.com/Prajwal_K23)
+* Reddit: [@prajwalkoirala23](https://www.reddit.com/user/prajwalkoirala23)
+* Twitch: [@prajwalkoirala23](https://www.twitch.tv/prajwalkoirala23)
+
+---
+### ⛑️ Support
+
+Give a ⭐️ if this project helped you!
+
+<a href="https://github.com/complexorganizations/wireguard-manager/fork">
+  <img alt="Fork" src="https://img.shields.io/github/forks/complexorganizations/wireguard-manager?style=social" />
+</a>
+
+
+---
+### ❤️ Credits
 [Angristan](https://raw.githubusercontent.com/angristan/wireguard-install/master/LICENSE)
 [l-n-s](https://raw.githubusercontent.com/l-n-s/wireguard-install/master/LICENSE)
 
 ---
-### License
-This project is under the [MIT](https://raw.githubusercontent.com/complexorganizations/wireguard-manager/master/.github/LICENSE)
+### 📝 License
+Copyright © 2020 [Prajwal](https://github.com/prajwal-koirala).<br />
+This project is [MIT](https://raw.githubusercontent.com/complexorganizations/wireguard-manager/master/.github/LICENSE) licensed.
