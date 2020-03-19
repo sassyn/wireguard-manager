@@ -9,14 +9,14 @@
   <a href="https://github.com/complexorganizations/wireguard-manager/issues">
     <img alt="Issues" src="https://img.shields.io/github/issues/complexorganizations/wireguard-manager" />
   </a>
-  <a href="https://img.shields.io/github/contributors/complexorganizations/wireguard-manager">
-    <img alt="Contributors" src="https://github.com/complexorganizations/wireguard-manager/graphs/contributors" />
+  <a href="https://github.com/complexorganizations/wireguard-manager/graphs/contributors">
+    <img alt="Contributors" src="https://img.shields.io/github/contributors/complexorganizations/wireguard-manager" />
   </a>
-  <a href="https://img.shields.io/github/forks/complexorganizations/wireguard-manager?style=social">
-    <img alt="Fork" src="https://github.com/complexorganizations/wireguard-manager/fork" />
+  <a href="https://github.com/complexorganizations/wireguard-manager/fork">
+    <img alt="Fork" src="https://img.shields.io/github/forks/complexorganizations/wireguard-manager?style=social" />
   </a>
-  <a href="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub">
-    <img alt="Sponsors" src="https://github.com/sponsors/Prajwal-Koirala" />
+  <a href="https://github.com/sponsors/Prajwal-Koirala">
+    <img alt="Sponsors" src="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub" />
   </a>
 </p>
 
