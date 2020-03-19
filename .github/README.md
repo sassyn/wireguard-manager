@@ -19,8 +19,8 @@
 WireGuard is a straightforward yet fast and modern VPN that utilizes state-of-the-art cryptography. It aims to be faster, simpler, leaner, and more useful than IPsec while avoiding the massive headache. It intends to be considerably more performant than OpenVPN. WireGuard is designed as a general-purpose VPN for running on embedded interfaces and super computers alike, fit for many different circumstances. Initially released for the Linux kernel, it is now cross-platform (Windows, macOS, BSD, iOS, Android) and widely deployable. It is currently under a massive development, but it already might be regarded as the most secure, most comfortable to use, and the simplest VPN solution in the industry.
 
 ### ⛳ Goals
- - strong, modern security by default
- - minimal config and key management
+ - robust and modern security by default
+ - minimal config and critical management
  - fast, both low-latency and high-bandwidth
  - simple internals and small protocol surface area
  - simple CLI and seamless integration with system networking
@@ -29,7 +29,7 @@ WireGuard is a straightforward yet fast and modern VPN that utilizes state-of-th
 ### Prerequisite
 - CentOS, Debian, Ubuntu, Arch, Fedora, Redhat, Raspbian
 - Linux `Kernel 4.1` or newer
-- You will need super user access or a user account with `sudo` privilege.
+- You will need superuser access or a user account with `sudo` privilege.
 
 ---
 ### 📲 Installation
@@ -37,11 +37,11 @@ Lets first use `curl` and save the file in `/etc/wireguard/`
 ```
 curl https://raw.githubusercontent.com/complexorganizations/wireguard-manager/master/wireguard-server.sh --create-dirs -o /etc/wireguard/wireguard-server.sh
 ```
-Than lets make the script user executable (Optional)
+Then let's make the script user executable (Optional)
 ```
 chmod +x /etc/wireguard/wireguard-server.sh
 ```
-Its finally time to execute the script
+It's finally time to execute the script
 ```
 bash /etc/wireguard/wireguard-server.sh
 ```
@@ -82,7 +82,7 @@ usage: ./wireguard-server.sh <command> [options]
 - If needed, the script can cleanly remove WireGuard, including configuration and iptables rules
 - Variety of DNS resolvers to be pushed to the clients
 - The choice to use a self-hosted resolver with Unbound.
-- Preshared-key for extra layer of security.
+- Preshared-key for an extra layer of security.
 - Block DNS leaks
 - Dynamic DNS supported
 - Many other little things!
@@ -163,7 +163,7 @@ Which WireGuard client do you recommend?
 Is there WireGuard documentation?
 - Yes, please head to the [WireGuard Manual](https://www.wireguard.com), which references all the options.
 
-How do i install wireguard without the questions? (Headless Install) ***Server Only***
+How do I install a wireguard without the questions? (Headless Install) ***Server Only***
 - ```HEADLESS_INSTALL=y /etc/wireguard/wireguard-server.sh```
 
 Official Links
@@ -199,7 +199,7 @@ bash -x /etc/wireguard/wireguard-(server|client).sh >> /etc/wireguard/wireguard-
 ---
 ### ⛑️ Support
 
-Give a ⭐️ if this project helped you!
+Give, and ⭐️ if this project helped you!
 
 <a href="https://github.com/complexorganizations/wireguard-manager/fork">
   <img alt="Fork" src="https://img.shields.io/github/forks/complexorganizations/wireguard-manager?style=social" />
