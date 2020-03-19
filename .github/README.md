@@ -15,11 +15,10 @@
 </p>
 
 ---
-### What is WireGuard❓
+### 📶 What is WireGuard❓
 WireGuard is a straightforward yet fast and modern VPN that utilizes state-of-the-art cryptography. It aims to be faster, simpler, leaner, and more useful than IPsec while avoiding the massive headache. It intends to be considerably more performant than OpenVPN. WireGuard is designed as a general-purpose VPN for running on embedded interfaces and super computers alike, fit for many different circumstances. Initially released for the Linux kernel, it is now cross-platform (Windows, macOS, BSD, iOS, Android) and widely deployable. It is currently under a massive development, but it already might be regarded as the most secure, most comfortable to use, and the simplest VPN solution in the industry.
 
----
-### ⛳ WireGuard Goals
+### ⛳ Goals
  - strong, modern security by default
  - minimal config and key management
  - fast, both low-latency and high-bandwidth
@@ -30,7 +29,7 @@ WireGuard is a straightforward yet fast and modern VPN that utilizes state-of-th
 ### Prerequisite
 - CentOS, Debian, Ubuntu, Arch, Fedora, Redhat, Raspbian
 - Linux `Kernel 4.1` or newer
-- You will need root access or a user account with `sudo` privilege.
+- You will need super user access or a user account with `sudo` privilege.
 
 ---
 ### 📲 Installation
@@ -205,7 +204,6 @@ Give a ⭐️ if this project helped you!
 <a href="https://github.com/complexorganizations/wireguard-manager/fork">
   <img alt="Fork" src="https://img.shields.io/github/forks/complexorganizations/wireguard-manager?style=social" />
 </a>
-
 
 ---
 ### ❤️ Credits
