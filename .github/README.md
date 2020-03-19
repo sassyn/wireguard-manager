@@ -1,10 +1,24 @@
-## Wireguard Manager
-[![GitHub release](https://img.shields.io/github/v/release/complexorganizations/wireguard-manager)](https://github.com/complexorganizations/wireguard-manager/releases)
-[![ShellCheck](https://github.com/complexorganizations/wireguard-manager/workflows/ShellCheck/badge.svg)](https://github.com/complexorganizations/wireguard-manager/actions)
-[![GitHub issues](https://img.shields.io/github/issues/complexorganizations/wireguard-manager)](https://github.com/complexorganizations/wireguard-manager/issues)
-[![GitHub contributors](https://img.shields.io/github/contributors/complexorganizations/wireguard-manager)](https://github.com/complexorganizations/wireguard-manager/graphs/contributors)
-[![GitHub forks](https://img.shields.io/github/forks/complexorganizations/wireguard-manager?style=social)](https://github.com/complexorganizations/wireguard-manager/fork)
-[![GitHub sponsor](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub)](https://github.com/sponsors/Prajwal-Koirala)
+<h1 align="center">WireGuard Manager 👋</h1>
+<p align="center">
+  <a href="https://github.com/complexorganizations/wireguard-manager/releases">
+    <img alt="Release" src="https://img.shields.io/github/v/release/complexorganizations/wireguard-manager" target="_blank" />
+  </a>
+  <a href="https://github.com/complexorganizations/wireguard-manager/actions">
+    <img alt="ShellCheck" src="https://github.com/complexorganizations/wireguard-manager/workflows/ShellCheck/badge.svg" target="_blank" />
+  </a>
+  <a href="https://github.com/complexorganizations/wireguard-manager/issues">
+    <img alt="Issues" src="https://img.shields.io/github/issues/complexorganizations/wireguard-manager" />
+  </a>
+  <a href="https://img.shields.io/github/contributors/complexorganizations/wireguard-manager">
+    <img alt="Contributors" src="https://github.com/complexorganizations/wireguard-manager/graphs/contributors" />
+  </a>
+  <a href="https://img.shields.io/github/forks/complexorganizations/wireguard-manager?style=social">
+    <img alt="Fork" src="https://github.com/complexorganizations/wireguard-manager/fork" />
+  </a>
+  <a href="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub">
+    <img alt="Sponsors" src="https://github.com/sponsors/Prajwal-Koirala" />
+  </a>
+</p>
 
 ---
 ### What is WireGuard?
