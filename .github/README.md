@@ -143,7 +143,7 @@ usage: ./wireguard-server.sh <command> [options]
 | Rackspace       |:white_check_mark:  |
 | Scaleway        |:white_check_mark:  |
 | EuroVPS         |:white_check_mark:  |
-| Hetzner Cloud   |:white_check_mark:  |
+| Hetzner Cloud   |:x:                 |
 | Strato          |:x:                 |
 
 ---
