@@ -86,6 +86,7 @@ function usage-guide() {
   echo "  --list        Show WireGuard Peers"
   echo "  --add         Add WireGuard Peer"
   echo "  --remove      Remove WireGuard Peer"
+  echo "  --reinstall   Reinstall WireGuard Interface"
   echo "  --uninstall   Uninstall WireGuard Interface"
   echo "  --update      Update WireGuard Script"
   echo "  --help        Show Usage Guide"
@@ -123,13 +124,17 @@ function usage() {
       shift
       WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-6}
       ;;
-    --uninstall)
+    --reinstall)
       shift
       WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-7}
       ;;
-    --update)
+    --uninstall)
       shift
       WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-8}
+      ;;
+    --update)
+      shift
+      WIREGUARD_OPTIONS=${WIREGUARD_OPTIONS:-9}
       ;;
     --help)
       shift
@@ -818,11 +823,12 @@ else
     echo "   4) Restart WireGuard Interface"
     echo "   5) Add WireGuard Peer"
     echo "   6) Remove WireGuard Peer"
-    echo "   7) Uninstall WireGuard Interface"
-    echo "   8) Update this script"
-    echo "   9) Exit"
-    until [[ "$WIREGUARD_OPTIONS" =~ ^[1-9]$ ]]; do
-      read -rp "Select an Option [1-9]: " -e -i 1 WIREGUARD_OPTIONS
+    echo "   7) Reinstall WireGuard Interface"
+    echo "   8) Uninstall WireGuard Interface"
+    echo "   9) Update this script"
+    echo "   10) Exit"
+    until [[ "$WIREGUARD_OPTIONS" =~ ^[1-10]$ ]]; do
+      read -rp "Select an Option [1-10]: " -e -i 1 WIREGUARD_OPTIONS
     done
     case $WIREGUARD_OPTIONS in
     1)
@@ -923,9 +929,19 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
       fi
       ;;
     7)
+      if pgrep systemd-journal; then
+        dpkg-reconfigure wireguard-dkms
+        modprobe wireguard
+        systemctl restart wg-quick@$WIREGUARD_PUB_NIC
+      else
+        dpkg-reconfigure wireguard-dkms
+        modprobe wireguard
+        service wg-quick@$WIREGUARD_PUB_NIC restart
+      fi
+    8)
       # Uninstall Wireguard and purging files
       # shellcheck disable=SC2034
-      read -rp "Do you really want to remove Wireguard? [y/n]:" -e -i n REMOVE_WIREGUARD
+      read -rp "Do you really want to remove Wireguard? [y/n]: " -e -i n REMOVE_WIREGUARD
       if [ "$REMOVE_WIREGUARD" = "y" ]; then
         # Stop WireGuard
         if pgrep systemd-journal; then
@@ -988,13 +1004,13 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
         chattr +i /etc/resolv.conf
       fi
       ;;
-    8) ## Update the script
+    9) ## Update the script
       curl -o /etc/wireguard/wireguard-server.sh https://raw.githubusercontent.com/complexorganizations/wireguard-installer-manager/master/wireguard-server.sh
       sleep 3
       chmod +x /etc/wireguard/wireguard-server.sh
       bash /etc/wireguard/wireguard-server.sh
       ;;
-    9)
+    10)
       exit
       ;;
     esac

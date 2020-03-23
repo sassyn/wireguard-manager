@@ -69,6 +69,7 @@ usage: ./wireguard-server.sh [options]
   --list        Show WireGuard Peers
   --add         Add WireGuard Peer
   --remove      Remove WireGuard Peer
+  --reinstall   Reinstall WireGuard Interface
   --uninstall   Uninstall WireGuard Interface
   --update      Update WireGuard Script
   --help        Show Usage Guide
