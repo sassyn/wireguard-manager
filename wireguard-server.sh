@@ -938,6 +938,7 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
         modprobe wireguard
         service wg-quick@$WIREGUARD_PUB_NIC restart
       fi
+      ;;
     8)
       # Uninstall Wireguard and purging files
       # shellcheck disable=SC2034
