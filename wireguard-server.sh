@@ -513,7 +513,9 @@ if [ ! -f "$WG_CONFIG" ]; then
       echo "  9) Yandex Basic"
       echo "  10) Clean Browsing"
       echo "  11) Custom (Advanced)"
-      read -rp "DNS [1-11]: " -e -i 1 CLIENT_DNS_SETTINGS
+    until [[ "$CLIENT_DNS_SETTINGS" =~ ^[1-9]$ ]]; do
+      read -rp "DNS [1-9]: " -e -i 1 CLIENT_DNS_SETTINGS
+    done
       case $CLIENT_DNS_SETTINGS in
       1)
         CLIENT_DNS="176.103.130.130,176.103.130.131,2a00:5a60::ad1:0ff,2a00:5a60::ad2:0ff"
@@ -540,12 +542,6 @@ if [ ! -f "$WG_CONFIG" ]; then
         CLIENT_DNS="84.200.69.80,84.200.70.40,2001:1608:10:25::1c04:b12f,2001:1608:10:25::9249:d69b"
         ;;
       9)
-        CLIENT_DNS="77.88.8.8,77.88.8.1,2a02:6b8::feed:0ff,2a02:6b8:0:1::feed:0ff"
-        ;;
-      10)
-        CLIENT_DNS="185.228.168.9,185.228.169.9,2a0d:2a00:1::2,2a0d:2a00:2::2"
-        ;;
-      11)
         read -rp "Custom DNS (IPv4 IPv6):" -e -i "176.103.130.130,2a00:5a60::ad1:0ff" CLIENT_DNS
         ;;
       esac
