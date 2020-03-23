@@ -24,6 +24,11 @@ function virt-check() {
     echo "LXC virtualization is not supported (yet)."
     exit
   fi
+  # Deny Docker
+  if [ -f /.dockerenv ]; then
+    echo "Docker is not supported (yet)."
+    exit
+  fi
 }
 
 # Virtualization Check

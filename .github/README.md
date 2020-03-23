@@ -127,9 +127,6 @@ usage: ./wireguard-server.sh <command> [options]
 | RedHat 8.x ≥    |:white_check_mark:  |:white_check_mark:  |:white_check_mark:  |:white_check_mark:  |:white_check_mark:  |
 | Arch            |:white_check_mark:  |:white_check_mark:  |:white_check_mark:  |:white_check_mark:  |:white_check_mark:  |
 | Raspbian        |:white_check_mark:  |:white_check_mark:  |:white_check_mark:  |:white_check_mark:  |:white_check_mark:  |
-| LXC             |:x:                 |:x:                 |:x:                 |:x:                 |:x:                 |
-| KVM             |:white_check_mark:  |:white_check_mark:  |:white_check_mark:  |:white_check_mark:  |:white_check_mark:  |
-| OpenVZ          |:x:                 |:x:                 |:x:                 |:x:                 |:x:                 |
 ### ☁️ Compatibility with Cloud Providers
 | Cloud           | Supported          |
 | --------------  | ------------------ |
@@ -145,6 +142,11 @@ usage: ./wireguard-server.sh <command> [options]
 | EuroVPS         |:white_check_mark:  |
 | Hetzner Cloud   |:x:                 |
 | Strato          |:x:                 |
+### 🛡️ Compatibility with Virtualization
+| KVM             |:white_check_mark:  |
+| LXC             |:x:                 |
+| OpenVZ          |:x:                 |
+| Docker          |:x:                 |
 
 ---
 ### 🙋 Q&A
