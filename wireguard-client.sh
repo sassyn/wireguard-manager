@@ -2,34 +2,38 @@
 # Secure WireGuard For CentOS, Debian, Ubuntu, Arch, Fedora, Redhat, Raspbian
 # https://github.com/complexorganizations/wireguard-manager
 
-# Function to check for root.
-function root-check() {
+# Require script to be run as root (or with sudo)
+function super-user-check() {
   if [ "$EUID" -ne 0 ]; then
-    echo "You need to run this script as root."
+    echo "You need to run this script as super user."
     exit
   fi
 }
 
 # Check for root
-root-check
+super-user-check
 
 # Checking For Virtualization
 function virt-check() {
-  # Deny OpenVZ
+  # Deny OpenVZ Virtualization
   if [ "$(systemd-detect-virt)" == "openvz" ]; then
     echo "OpenVZ virtualization is not supported (yet)."
     exit
   fi
-  # Deny LXC
+  # Deny LXC Virtualization
   if [ "$(systemd-detect-virt)" == "lxc" ]; then
     echo "LXC virtualization is not supported (yet)."
+    exit
+  fi
+  # Deny Docker
+  if [ -f /.dockerenv ]; then
+    echo "Docker is not supported (yet)."
     exit
   fi
 }
 
 # Virtualization Check
 virt-check
-
 # Detect Operating System
 function dist-check() {
   # shellcheck disable=SC1090
