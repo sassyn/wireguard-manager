@@ -510,9 +510,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       echo "  6) Quad9"
       echo "  7) FDN"
       echo "  8) DNS.WATCH"
-      echo "  9) Yandex Basic"
-      echo "  10) Clean Browsing"
-      echo "  11) Custom (Advanced)"
+      echo "  9) Custom (Advanced)"
     until [[ "$CLIENT_DNS_SETTINGS" =~ ^[1-9]$ ]]; do
       read -rp "DNS [1-9]: " -e -i 1 CLIENT_DNS_SETTINGS
     done
