@@ -1,5 +1,4 @@
 #!/bin/bash
-# Secure WireGuard For CentOS, Debian, Ubuntu, Arch, Fedora, Redhat, Raspbian
 # https://github.com/complexorganizations/wireguard-manager
 
 # Require script to be run as root (or with sudo)
