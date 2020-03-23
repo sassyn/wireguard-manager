@@ -143,6 +143,8 @@ usage: ./wireguard-server.sh <command> [options]
 | Hetzner Cloud   |:x:                 |
 | Strato          |:x:                 |
 ### 🛡️ Compatibility with Virtualization
+| Virtualization  | Supported          |
+| --------------  | ------------------ |
 | KVM             |:white_check_mark:  |
 | LXC             |:x:                 |
 | OpenVZ          |:x:                 |
