@@ -61,7 +61,7 @@ In your `/etc/wireguard/clients` directory, you will have `.conf` files. These a
 ---
 ### 🔑 Usage
 ```
-usage: ./wireguard-server.sh <command> [options]
+usage: ./wireguard-server.sh [options]
   --install     Install WireGuard Interface
   --start       Start WireGuard Interface
   --stop        Stop WireGuard Interface
