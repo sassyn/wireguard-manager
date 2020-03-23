@@ -17,16 +17,6 @@ Steps to reproduce the behavior:
 3. Scroll down to '....'
 4. See error
 
-**Server Debugging**
-```
-bash -x /etc/wireguard/wireguard-server.sh >> /etc/wireguard/wireguard-server.log
-```
-
-**Client Debugging**
-```
-bash -x /etc/wireguard/wireguard-server.sh >> /etc/wireguard/wireguard-client.log
-```
-
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
