@@ -809,7 +809,6 @@ else
 
   # Already installed what next?
   function wireguard-next-questions() {
-    echo "Looks like Wireguard is already installed."
     echo "What do you want to do?"
     echo "   1) Show WireGuard Interface"
     echo "   2) Start WireGuard Interface"
