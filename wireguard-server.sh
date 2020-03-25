@@ -257,7 +257,7 @@ if [ ! -f "$WG_CONFIG" ]; then
     # Apply port response
     case $SERVER_HOST_V4_SETTINGS in
     1)
-      SERVER_HOST_V4="$(curl --silent ipv4.icanhazip.com)"
+      SERVER_HOST_V4="$(curl -4 https://ipengine.dev)"
       ;;
     2)
       SERVER_HOST_V4=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
@@ -283,7 +283,7 @@ if [ ! -f "$WG_CONFIG" ]; then
     # Apply port response
     case $SERVER_HOST_V6_SETTINGS in
     1)
-      SERVER_HOST_V6="$(curl --silent ipv6.icanhazip.com)"
+      SERVER_HOST_V6="$(curl -6 https://ipengine.dev)"
       ;;
     2)
       SERVER_HOST_V6=$(ip r get to 2001:4860:4860::8888 | perl -ne '/src ([\w:]+)/ && print "$1\n"')
