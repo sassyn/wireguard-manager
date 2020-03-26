@@ -856,8 +856,10 @@ else
       fi
       ;;
     5)
+    if [ "$NEW_CLIENT_NAME" == "" ]; then
       echo "Lets name the WireGuard Peer, Use one word only, no special characters. (No Spaces)"
       read -rp "New client name: " -e NEW_CLIENT_NAME
+    fi
       CLIENT_PRIVKEY=$(wg genkey)
       CLIENT_PUBKEY=$(echo "$CLIENT_PRIVKEY" | wg pubkey)
       PRESHARED_KEY=$(wg genpsk)
