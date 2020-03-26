@@ -757,7 +757,6 @@ if [ ! -f "$WG_CONFIG" ]; then
     CLIENT_ADDRESS_V6="${PRIVATE_SUBNET_V6::-4}3"
     PRESHARED_KEY=$(wg genpsk)
     PEER_PORT=$(shuf -i1024-65535 -n1)
-    INTERFACE_PORT=$(shuf -i1024-65535 -n1)
     mkdir -p /etc/wireguard
     mkdir -p /etc/wireguard/clients
     touch $WG_CONFIG && chmod 600 $WG_CONFIG
@@ -768,7 +767,6 @@ if [ ! -f "$WG_CONFIG" ]; then
 Address = $GATEWAY_ADDRESS_V4/$PRIVATE_SUBNET_MASK_V4,$GATEWAY_ADDRESS_V6/$PRIVATE_SUBNET_MASK_V6
 ListenPort = $SERVER_PORT
 PrivateKey = $SERVER_PRIVKEY
-ListenPort = $INTERFACE_PORT
 PostUp = iptables -A FORWARD -i $WIREGUARD_PUB_NIC -j ACCEPT; iptables -t nat -A POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; ip6tables -A FORWARD -i $WIREGUARD_PUB_NIC -j ACCEPT; ip6tables -t nat -A POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; iptables -A INPUT -s $PRIVATE_SUBNET_V4 -p udp -m udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT; ip6tables -A INPUT -s $PRIVATE_SUBNET_V6 -p udp -m udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
 PostDown = iptables -D FORWARD -i $WIREGUARD_PUB_NIC -j ACCEPT; iptables -t nat -D POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; ip6tables -D FORWARD -i $WIREGUARD_PUB_NIC -j ACCEPT; ip6tables -t nat -D POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; iptables -D INPUT -s $PRIVATE_SUBNET_V4 -p udp -m udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT; iptables -D INPUT -s $PRIVATE_SUBNET_V6 -p udp -m udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
 SaveConfig = false
