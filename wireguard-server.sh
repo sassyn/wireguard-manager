@@ -756,6 +756,8 @@ if [ ! -f "$WG_CONFIG" ]; then
     CLIENT_ADDRESS_V4="${PRIVATE_SUBNET_V4::-4}3"
     CLIENT_ADDRESS_V6="${PRIVATE_SUBNET_V6::-4}3"
     PRESHARED_KEY=$(wg genpsk)
+    PEER_PORT=$(shuf -i1024-65535 -n1)
+    INTERFACE_PORT=$(shuf -i1024-65535 -n1)
     mkdir -p /etc/wireguard
     mkdir -p /etc/wireguard/clients
     touch $WG_CONFIG && chmod 600 $WG_CONFIG
@@ -766,6 +768,7 @@ if [ ! -f "$WG_CONFIG" ]; then
 Address = $GATEWAY_ADDRESS_V4/$PRIVATE_SUBNET_MASK_V4,$GATEWAY_ADDRESS_V6/$PRIVATE_SUBNET_MASK_V6
 ListenPort = $SERVER_PORT
 PrivateKey = $SERVER_PRIVKEY
+ListenPort = $INTERFACE_PORT
 PostUp = iptables -A FORWARD -i $WIREGUARD_PUB_NIC -j ACCEPT; iptables -t nat -A POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; ip6tables -A FORWARD -i $WIREGUARD_PUB_NIC -j ACCEPT; ip6tables -t nat -A POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; iptables -A INPUT -s $PRIVATE_SUBNET_V4 -p udp -m udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT; ip6tables -A INPUT -s $PRIVATE_SUBNET_V6 -p udp -m udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
 PostDown = iptables -D FORWARD -i $WIREGUARD_PUB_NIC -j ACCEPT; iptables -t nat -D POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; ip6tables -D FORWARD -i $WIREGUARD_PUB_NIC -j ACCEPT; ip6tables -t nat -D POSTROUTING -o $SERVER_PUB_NIC -j MASQUERADE; iptables -D INPUT -s $PRIVATE_SUBNET_V4 -p udp -m udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT; iptables -D INPUT -s $PRIVATE_SUBNET_V6 -p udp -m udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
 SaveConfig = false
@@ -780,6 +783,7 @@ AllowedIPs = $CLIENT_ADDRESS_V4/32,$CLIENT_ADDRESS_V6/128
 [Interface]
 Address = $CLIENT_ADDRESS_V4/$PRIVATE_SUBNET_MASK_V4,$CLIENT_ADDRESS_V6/$PRIVATE_SUBNET_MASK_V6
 DNS = $CLIENT_DNS
+ListenPort = $PEER_PORT
 MTU = $MTU_CHOICE
 PrivateKey = $CLIENT_PRIVKEY
 [Peer]
@@ -857,6 +861,7 @@ else
       CLIENT_PRIVKEY=$(wg genkey)
       CLIENT_PUBKEY=$(echo "$CLIENT_PRIVKEY" | wg pubkey)
       PRESHARED_KEY=$(wg genpsk)
+      PEER_PORT=$(shuf -i1024-65535 -n1)
       PRIVATE_SUBNET_V4=$(head -n1 $WG_CONFIG | awk '{print $2}')
       PRIVATE_SUBNET_MASK_V4=$(echo "$PRIVATE_SUBNET_V4" | cut -d "/" -f 2)
       PRIVATE_SUBNET_V6=$(head -n1 $WG_CONFIG | awk '{print $3}')
@@ -881,6 +886,7 @@ AllowedIPs = $CLIENT_ADDRESS_V4/32,$CLIENT_ADDRESS_V6/128
 [Interface]
 Address = $CLIENT_ADDRESS_V4/$PRIVATE_SUBNET_MASK_V4,$CLIENT_ADDRESS_V6/$PRIVATE_SUBNET_MASK_V6
 DNS = $CLIENT_DNS
+ListenPort = $PEER_PORT
 MTU = $MTU_CHOICE
 PrivateKey = $CLIENT_PRIVKEY
 [Peer]
