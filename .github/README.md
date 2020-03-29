@@ -35,7 +35,7 @@ WireGuard is a straightforward yet fast and modern VPN that utilizes state-of-th
 ### 📲 Installation
 Lets first use `curl` and save the file in `/etc/wireguard/`
 ```
-curl https://raw.githubusercontent.com/complexorganizations/wireguard-manager/master/wireguard-server.sh --create-dirs -o /etc/wireguard/wireguard-server.sh
+curl "https://raw.githubusercontent.com/complexorganizations/wireguard-manager/master/wireguard-server.sh?$(date +%s)" --create-dirs -o /etc/wireguard/wireguard-server.sh 
 ```
 Then let's make the script user executable (Optional)
 ```
