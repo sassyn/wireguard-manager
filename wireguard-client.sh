@@ -34,6 +34,33 @@ function virt-check() {
 # Virtualization Check
 virt-check
 
+# Pre-Checks
+function check-system-requirements() {
+  # System requirements (iptables)
+  if ! [ -x "$(command -v iptables)" ]; then
+    echo "Error: iptables is not installed, please install iptables." >&2
+    exit
+  fi
+  # System requirements (curl)
+  if ! [ -x "$(command -v curl)" ]; then
+    echo "Error: curl is not installed, please install curl." >&2
+    exit
+  fi
+  # System requirements (bc)
+  if ! [ -x "$(command -v bc)" ]; then
+    echo "Error: bc  is not installed, please install bc." >&2
+    exit
+  fi
+  # System requirements (uname)
+  if ! [ -x "$(command -v uname)" ]; then
+    echo "Error: uname  is not installed, please install uname." >&2
+    exit
+  fi
+}
+
+# Run the function and check for requirements
+check-system-requirements
+
 # Lets check the kernel version
 function kernel-check() {
 KERNEL_VERSION_LIMIT=4.1
@@ -46,7 +73,7 @@ else
 fi
 }
 
-# Kernel Version 
+# Kernel Version
 kernel-check
 
 # Detect Operating System
