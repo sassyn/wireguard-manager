@@ -34,36 +34,6 @@ function virt-check() {
 # Virtualization Check
 virt-check
 
-# Lets check the kernel version
-function kernel-check() {
-KERNEL_VERSION_LIMIT=4.1
-KERNEL_CURRENT_VERSION=$(uname -r | cut -c1-3)
-if (( $(echo "$KERNEL_CURRENT_VERSION > $KERNEL_VERSION_LIMIT" |bc -l) )); then
-    echo "Kernel version: $KERNEL_CURRENT_VERSION > Version Limit: $KERNEL_VERSION_LIMIT"
-else
-    echo "Kernel version: $KERNEL_CURRENT_VERSION < Version Limit: $KERNEL_VERSION_LIMIT"
-    exit
-fi
-}
-
-# Kernel Version 
-kernel-check
-
-# Detect Operating System
-function dist-check() {
-  # shellcheck disable=SC1090
-  if [ -e /etc/os-release ]; then
-    # shellcheck disable=SC1091
-    source /etc/os-release
-    DISTRO=$ID
-    # shellcheck disable=SC2034
-    DISTRO_VERSION=$VERSION_ID
-  fi
-}
-
-# Check Operating System
-dist-check
-
 # Pre-Checks
 function check-system-requirements() {
   # System requirements (iptables)
@@ -86,10 +56,50 @@ function check-system-requirements() {
     echo "Error: shuf is not installed, please install shuf." >&2
     exit
   fi
+  # System requirements (bc)
+  if ! [ -x "$(command -v bc)" ]; then
+    echo "Error: bc  is not installed, please install bc." >&2
+    exit
+  fi
+  # System requirements (uname)
+  if ! [ -x "$(command -v uname)" ]; then
+    echo "Error: uname  is not installed, please install uname." >&2
+    exit
+  fi
 }
 
 # Run the function and check for requirements
 check-system-requirements
+
+# Lets check the kernel version
+function kernel-check() {
+KERNEL_VERSION_LIMIT=4.1
+KERNEL_CURRENT_VERSION=$(uname -r | cut -c1-3)
+if (( $(echo "$KERNEL_CURRENT_VERSION > $KERNEL_VERSION_LIMIT" |bc -l) )); then
+    echo "Kernel version: $KERNEL_CURRENT_VERSION > Version Limit: $KERNEL_VERSION_LIMIT"
+else
+    echo "Kernel version: $KERNEL_CURRENT_VERSION < Version Limit: $KERNEL_VERSION_LIMIT"
+    exit
+fi
+}
+
+# Kernel Version
+kernel-check
+
+# Detect Operating System
+function dist-check() {
+  # shellcheck disable=SC1090
+  if [ -e /etc/os-release ]; then
+    # shellcheck disable=SC1091
+    source /etc/os-release
+    DISTRO=$ID
+    # shellcheck disable=SC2034
+    DISTRO_VERSION=$VERSION_ID
+  fi
+}
+
+# Check Operating System
+dist-check
 
 function usage-guide() {
   # shellcheck disable=SC2027,SC2046
