@@ -33,6 +33,22 @@ function virt-check() {
 
 # Virtualization Check
 virt-check
+
+# Lets check the kernel version
+function kernel-check() {
+KERNEL_VERSION_LIMIT=4.1
+KERNEL_CURRENT_VERSION=$(uname -r | cut -c1-3)
+if (( $(echo "$KERNEL_CURRENT_VERSION > $KERNEL_VERSION_LIMIT" |bc -l) )); then
+    echo "Kernel version: $KERNEL_CURRENT_VERSION > Version Limit: $KERNEL_VERSION_LIMIT"
+else
+    echo "Kernel version: $KERNEL_CURRENT_VERSION < Version Limit: $KERNEL_VERSION_LIMIT"
+    exit
+fi
+}
+
+# Kernel Version 
+kernel-check
+
 # Detect Operating System
 function dist-check() {
   # shellcheck disable=SC1090
