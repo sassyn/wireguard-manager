@@ -28,7 +28,7 @@ WireGuard is a straightforward yet fast and modern VPN that utilizes state-of-th
 ---
 ### Prerequisite
 - CentOS, Debian, Ubuntu, Arch, Fedora, Redhat, Raspbian
-- Linux `Kernel 4.1` or newer
+- Linux `Kernel 3.10` or newer
 - You will need superuser access or a user account with `sudo` privilege.
 
 ---
