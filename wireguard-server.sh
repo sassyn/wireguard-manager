@@ -1031,8 +1031,7 @@ PublicKey = $SERVER_PUBKEY" >>/etc/wireguard/clients/"$NEW_CLIENT_NAME"-$WIREGUA
     9) ## Update the script
       curl -o /etc/wireguard/wireguard-server.sh https://raw.githubusercontent.com/complexorganizations/wireguard-installer-manager/master/wireguard-server.sh
       sleep 3
-      chmod +x /etc/wireguard/wireguard-server.sh
-      bash /etc/wireguard/wireguard-server.sh
+      chmod +x /etc/wireguard/wireguard-server.sh || exit
       ;;
     esac
   }
