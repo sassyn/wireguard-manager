@@ -71,6 +71,11 @@ function check-system-requirements() {
     echo "Error: jq  is not installed, please install jq." >&2
     exit
   fi
+  # System requirements (sed)
+  if ! [ -x "$(command -v sed)" ]; then
+    echo "Error: sed  is not installed, please install sed." >&2
+    exit
+  fi
 }
 
 # Run the function and check for requirements
