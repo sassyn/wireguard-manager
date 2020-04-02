@@ -455,7 +455,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       SERVER_HOST="[$SERVER_HOST_V6]"
       ;;
     3)
-      read -rp "Custom Domain: " -e -i "$(curl --silent icanhazptr.com)" SERVER_HOST
+      read -rp "Custom Domain: " -e -i "$(curl -4 -s 'https://ipengine.dev' | jq -r '.hostname')" SERVER_HOST
       ;;
     esac
   }
