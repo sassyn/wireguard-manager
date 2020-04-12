@@ -97,7 +97,6 @@ function install-wireguard-client() {
     # shellcheck disable=SC2235
   if [ "$DISTRO" == "ubuntu" ] && ([ "$DISTRO_VERSION" == "20.04" ] || [ "$DISTRO_VERSION" == "19.10" ]); then
     apt-get update
-    apt-get install linux-headers-"$(uname -r)" -y
     apt-get install wireguard qrencode haveged resolvconf -y
   fi
   # shellcheck disable=SC2235
@@ -106,7 +105,6 @@ function install-wireguard-client() {
     apt-get install software-properties-common -y
     add-apt-repository ppa:wireguard/wireguard -y
     apt-get update
-    apt-get install linux-headers-"$(uname -r)" -y
     apt-get install wireguard qrencode haveged resolvconf -y
   fi
   if [ "$DISTRO" == "debian" ]; then
@@ -114,7 +112,6 @@ function install-wireguard-client() {
     echo "deb http://deb.debian.org/debian/ unstable main" >/etc/apt/sources.list.d/unstable.list
     printf 'Package: *\nPin: release a=unstable\nPin-Priority: 90\n' >/etc/apt/preferences.d/limit-unstable
     apt-get update
-    apt-get install linux-headers-"$(uname -r)" -y
     apt-get install wireguard qrencode haveged resolvconf -y
   fi
   if [ "$DISTRO" == "raspbian" ]; then
@@ -124,32 +121,28 @@ function install-wireguard-client() {
     echo "deb http://deb.debian.org/debian/ unstable main" >/etc/apt/sources.list.d/unstable.list
     printf 'Package: *\nPin: release a=unstable\nPin-Priority: 90\n' >/etc/apt/preferences.d/limit-unstable
     apt-get update
-    apt-get install raspberrypi-kernel-headers -y
     apt-get install wireguard qrencode haveged resolvconf -y
   fi
   if [ "$DISTRO" == "arch" ]; then
     pacman -Syu
-    pacman -Syu --noconfirm linux-headers
     pacman -Syu --noconfirm haveged qrencode iptables
     pacman -Syu --noconfirm wireguard-tools wireguard-arch resolvconf
   fi
   if [ "$DISTRO" = 'fedora' ] && [ "$DISTRO_VERSION" == "32" ]; then
     dnf update -y
-    dnf install kernel-headers-"$(uname -r)" kernel-devel-"$(uname -r)" -y
     dnf install qrencode wireguard-tools haveged resolvconf -y
   fi
   # shellcheck disable=SC2235
   if [ "$DISTRO" = 'fedora' ] && ([ "$DISTRO_VERSION" == "30" ] || [ "$DISTRO_VERSION" == "31" ]); then
     dnf update -y
     dnf copr enable jdoss/wireguard -y
-    dnf install kernel-headers-"$(uname -r)" kernel-devel-"$(uname -r)" -y
     dnf install qrencode wireguard-dkms wireguard-tools haveged resolvconf -y
   fi
   if [ "$DISTRO" == "centos" ] && [ "$DISTRO_VERSION" == "8" ]; then
     yum update -y
     yum install epel-release -y
     yum update -y
-    yum install kernel-headers-"$(uname -r)" kernel-devel-"$(uname -r)" resolvconf -y
+    yum install resolvconf -y
     yum config-manager --set-enabled PowerTools
     yum copr enable jdoss/wireguard -y
     yum install wireguard-dkms wireguard-tools qrencode haveged -y
@@ -160,7 +153,6 @@ function install-wireguard-client() {
     yum update -y
     yum install epel-release -y
     yum update -y
-    yum install kernel-headers-"$(uname -r)" kernel-devel-"$(uname -r)" -y
     yum install wireguard-dkms wireguard-tools qrencode haveged resolvconf -y
   fi
   if [ "$DISTRO" == "rhel" ] && [ "$DISTRO_VERSION" == "8" ]; then
@@ -177,10 +169,50 @@ function install-wireguard-client() {
     curl https://copr.fedorainfracloud.org/coprs/jdoss/wireguard/repo/epel-7/jdoss-wireguard-epel-7.repo --create-dirs -o /etc/yum.repos.d/wireguard.repo
     yum update -y
     yum install epel-release -y
-    yum install kernel-headers-"$(uname -r)" kernel-devel-"$(uname -r)" -y
     yum install wireguard-dkms wireguard-tools qrencode haveged resolvconf -y
   fi
 }
 
 # WireGuard Client
 install-wireguard-client
+
+# Lets check the kernel version and check if headers are required
+function install-kernel-headers() {
+KERNEL_VERSION_LIMIT=5.6
+KERNEL_CURRENT_VERSION=$(uname -r | cut -c1-3)
+if (( $(echo "$KERNEL_CURRENT_VERSION <= $KERNEL_VERSION_LIMIT" |bc -l) )); then
+    if [ "$DISTRO" == "debian" ]; then
+      apt-get update
+      apt-get install linux-headers-"$(uname -r)" -y
+    fi
+    if [ "$DISTRO" == "ubuntu" ]; then
+      apt-get update
+      apt-get install linux-headers-"$(uname -r)" -y
+    fi
+    if [ "$DISTRO" == "raspbian" ]; then
+      apt-get update
+      apt-get install raspberrypi-kernel-headers -y
+    fi
+    if [ "$DISTRO" == "arch" ]; then
+      pacman -Syu
+      pacman -Syu --noconfirm linux-headers
+    fi
+    if [ "$DISTRO" == "fedora" ]; then
+      dnf update -y
+      dnf install kernel-headers-"$(uname -r)" kernel-devel-"$(uname -r)" -y
+    fi
+    if [ "$DISTRO" == "centos" ]; then
+      yum update -y
+      yum install kernel-headers-"$(uname -r)" kernel-devel-"$(uname -r)" -y
+    fi
+    if [ "$DISTRO" == "rhel" ]; then
+      yum update -y
+      yum install kernel-headers-"$(uname -r)" kernel-devel-"$(uname -r)" -y
+    fi
+else
+    echo "Correct: You do not need kernel headers." >/dev/null 2>&1
+fi
+}
+
+# Kernel Version
+install-kernel-headers
