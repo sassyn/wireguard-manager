@@ -65,7 +65,7 @@ check-system-requirements
 function kernel-check() {
 KERNEL_VERSION_LIMIT=3.1
 KERNEL_CURRENT_VERSION=$(uname -r | cut -c1-3)
-if (( $(echo "$KERNEL_CURRENT_VERSION > $KERNEL_VERSION_LIMIT" |bc -l) )); then
+if (( $(echo "$KERNEL_CURRENT_VERSION >= $KERNEL_VERSION_LIMIT" |bc -l) )); then
     echo "Correct: Kernel version, $KERNEL_CURRENT_VERSION" >/dev/null 2>&1
 else
     echo "Error: Kernel version $KERNEL_CURRENT_VERSION please update to $KERNEL_VERSION_LIMIT" >&2
